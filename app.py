@@ -6,8 +6,28 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("🎢 Theme Park Planner")
+home = st.Page(
+    "pages/home.py",
+    title="Home",
+    icon="🏠",
+    default=True
+)
 
-st.write("Welcome to our theme park!")
+attractions = st.Page(
+    "pages/1_Attractions.py",
+    title="Attractions",
+    icon="🎢"
+)
 
-st.write("Use the sidebar to explore our attractions and plan your visit.")
+planner = st.Page(
+    "pages/2_Park_Planner.py",
+    title="Park Planner",
+    icon="🗺️"
+)
+
+pg = st.navigation(
+    [home, attractions, planner],
+    position="top"
+)
+
+pg.run()
