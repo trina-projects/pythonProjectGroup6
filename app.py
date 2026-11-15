@@ -1,28 +1,58 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="Theme Park Planner",
-    page_icon="🎢",
+    page_title="WonderWorld",
+    page_icon="🎡",
     layout="wide"
+)
+
+st.markdown("""
+<style>
+
+    /* Header background */
+    [data-testid="stHeader"] {
+        background-color: #91C3C2;
+    }
+
+    /* Navigation links */
+    [data-testid="stHeader"] a {
+        color: #F4F4F4 !important;
+    }
+
+    /* Navigation link hover */
+    [data-testid="stHeader"] a:hover {
+        color: #F4F4F4 !important;
+    }
+
+    /* Header buttons */
+    [data-testid="stHeader"] button {
+        color: #F4F4F4 !important;
+    }
+
+</style>
+""", unsafe_allow_html=True)
+
+
+
+st.logo(
+    "assets/main/logo.jpg",
+    size="large"
 )
 
 home = st.Page(
     "pages/home.py",
     title="Home",
-    icon="🏠",
     default=True
 )
 
 attractions = st.Page(
     "pages/1_Attractions.py",
-    title="Attractions",
-    icon="🎢"
+    title="Attractions"
 )
 
 planner = st.Page(
     "pages/2_Park_Planner.py",
-    title="Park Planner",
-    icon="🗺️"
+    title="Plan My Visit"
 )
 
 pg = st.navigation(
