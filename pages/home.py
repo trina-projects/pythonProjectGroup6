@@ -1,7 +1,7 @@
 import streamlit as st
 import base64
 from pathlib import Path
-from database.attractions import attractions, category_descriptions
+from database.attractions import attractions, category_descriptions, shows
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -34,8 +34,8 @@ st.html(f"""
     .hero-section {{
         background-image:
             linear-gradient(
-                rgba(0, 0, 0, 0.3),
-                rgba(0, 0, 0, 0.5)
+                rgba(0, 0, 0, 0.2),
+                rgba(0, 0, 0, 0.4)
             ),
             url("data:image/webp;base64,{encoded_image}");
 
@@ -43,7 +43,7 @@ st.html(f"""
         background-position: center;
         background-repeat: no-repeat;
 
-        height: 85vh;
+        height: 100vh;
 
         display: flex;
         flex-direction: column;
@@ -56,13 +56,14 @@ st.html(f"""
     .rainbow-title {{
         background: linear-gradient(
             90deg,
-            #ff0000,
-            #ff9900,
-            #ffff00,
-            #00ff88,
-            #00ccff,
-            #aa55ff,
-            #ff0000
+            #ff5e5e,
+            #ffb347,
+            #ffff66,
+            #66ff99,
+            #66eaff,
+            #b388ff,
+            #ff77ff,
+            #ff5e5e
         );
 
         background-size: 200% auto;
@@ -75,6 +76,8 @@ st.html(f"""
         font-size: 60px;
         font-weight: bold;
         margin-bottom: 10px;
+        filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4))
+                drop-shadow(0 4px 6px rgba(0, 0, 0, 0.6));
     }}
 
     @keyframes rainbowFlow {{
@@ -112,7 +115,7 @@ st.html("""
 
     /* Main attractions section */
     .st-key-attractions_grid {
-        max-width: 1200px;
+        max-width: 1000px;
         margin: 0 auto;
         padding: 60px 30px;
         background-color: #ffffff;
@@ -180,6 +183,27 @@ st.html("""
         height: 40px;
     }
 
+    /* Page background */
+    .stApp {
+        background-color: #ffffff;
+    }
+
+    /* Classification buttons */
+    [data-testid="stSegmentedControl"] button {
+        border-radius: 30px !important;
+        padding: 10px 22px !important;
+        font-size: 16px !important;
+    }
+
+    /* Attraction images */
+    [data-testid="stImage"] img {
+        width: 80%;
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+
+
 </style>
 """)
 #################################################################
@@ -195,67 +219,151 @@ with st.container(key="attractions_grid"):
         </h2>
 
         <p class="section-subtitle">
-            Discover an adventure for everyone!
+            Discover thrilling rides, magical performances
+            and unforgettable experiences at WonderWorld.
         </p>
     """)
 
-    # Select 5 categories for the 2x2 grid
-    categories = list(attractions.keys())[:5]
+    #############################################################
+    # CLASSIFICATION BAR
+    #############################################################
 
-    for i in range(0, len(categories), 2):
+    classification = st.segmented_control(
+        "Attraction Classification",
+        options=[
+            "All",
+            "Rides",
+            "Shows & Entertainment"
+        ],
+        default="All",
+        selection_mode="single",
+        label_visibility="collapsed"
+    )
+
+    selected_category = "All Rides"
+
+    # Secondary classification for rides
+    if classification == "Rides":
+
+        selected_category = st.segmented_control(
+            "Ride Categories",
+            options=["All Rides"] + list(attractions.keys()),
+            default="All Rides",
+            selection_mode="single",
+            label_visibility="collapsed"
+        )
+
+    #############################################################
+    # FILTER ATTRACTIONS
+    #############################################################
+
+    display_attractions = []
+
+    # Retrieve rides
+    if classification in ["All", "Rides"]:
+
+        for category, rides in attractions.items():
+
+            if (
+                classification == "All"
+                or selected_category == "All Rides"
+                or selected_category == category
+            ):
+
+                for ride in rides:
+
+                    display_attractions.append({
+                        "category": category,
+                        "type": "Ride",
+                        "details": ride
+                    })
+
+    # Retrieve shows
+    if classification in ["All", "Shows & Entertainment"]:
+
+        for category, performances in shows.items():
+
+            for show in performances:
+
+                display_attractions.append({
+                    "category": category,
+                    "type": "Show",
+                    "details": show
+                })
+
+    #############################################################
+    # DISPLAY FILTERED ATTRACTIONS
+    #############################################################
+
+    for i in range(0, len(display_attractions), 2):
 
         columns = st.columns(2, gap="large")
 
-        for col, category in zip(
-            columns, categories[i:i + 2]
+        for col, item in zip(
+            columns,
+            display_attractions[i:i + 2]
         ):
 
             with col:
 
-                # Retrieve rides from the database
-                rides = attractions[category]
+                # Retrieve individual attraction details
+                attraction = item["details"]
+                category = item["category"]
+                attraction_type = item["type"]
 
-                # Display category cover image
-                image_path = rides[0]["image"]
+                # Display attraction image
+                image_path = BASE_DIR / attraction["image"]
 
-                if image_path:
+                if image_path.exists():
+
                     st.image(
-                        str(BASE_DIR / image_path),
+                        str(image_path),
                         use_container_width=True
                     )
 
-                # Category title
+                # Display attraction name
                 st.html(f"""
                     <h3 class="category-title">
-                        {category}
+                        {attraction["name"]}
                     </h3>
                 """)
 
-                # Category description
+                # Display description
+                description = attraction.get(
+                    "description",
+                    category_descriptions.get(category, "")
+                )
+
                 st.html(f"""
                     <p class="category-description">
-                        {category_descriptions[category]}
+                        {description}
                     </p>
                 """)
 
-                # Create ride name tags
-                tags = ""
+                # Display category and duration tags
+                st.html(f"""
+                    <span class="ride-tag">
+                        {category}
+                    </span>
 
-                for ride in rides:
+                    <span class="ride-tag">
+                        {attraction["duration"]} mins
+                    </span>
+                """)
 
-                    tags += f"""
-                        <span class="ride-tag">
-                            {ride["name"]}
-                        </span>
-                    """
+                # Display show times for entertainment
+                if attraction_type == "Show":
 
-                st.html(tags)
+                    show_times = ", ".join(
+                        attraction["show_times"]
+                    )
 
-                # Link to attractions page
-                st.page_link(
-                    "pages/1_Attractions.py",
-                    label="Explore More"
-                )
+                    st.html(f"""
+                        <p class="category-description">
+                            <strong>Show times:</strong>
+                            {show_times}
+                        </p>
+                    """)
 
-        # Add spacing between each row
+        # Add spacing between rows
         st.html('<div class="grid-spacing"></div>')

@@ -85,6 +85,44 @@ attractions = {
     ]
 }
 
+shows = {
+    "Shows & Entertainment": [
+        {
+            "name": "Echoes of the Ancients",
+            "description": (
+                "End your adventure with breathtaking "
+                "fireworks, dazzling lights and magical music."
+            ),
+            "capacity": 500,
+            "duration": 20,
+            "show_times": ["19:30"],
+            "image": "assets/shows/echoesOfTheAncient.jpg"
+        },
+        {
+            "name": "Wings of Time",
+            "description": (
+                "Celebrate with colourful floats, lively "
+                "performers and enchanting music."
+            ),
+            "capacity": 300,
+            "duration": 30,
+            "show_times": ["14:00", "17:00"],
+            "image": "assets/shows/wingsOfTime.jpg"
+        },
+        {
+            "name": "The Dreamweaver’s Tent",
+            "description": (
+                "Step into a magical world of storytelling, "
+                "music and spectacular live performances."
+            ),
+            "capacity": 200,
+            "duration": 25,
+            "show_times": ["11:00", "15:30"],
+            "image": "assets/shows/dreamweaversTent.jpg"
+        }
+    ]
+}
+
 category_descriptions = {
     "Thrill Rides": (
         "Get your adrenaline pumping with exhilarating "
