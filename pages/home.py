@@ -5,7 +5,44 @@ from database.attractions import attractions, category_descriptions, shows
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+@st.dialog("WonderWorld Opening Hours")
+def show_opening_hours():
+    st.write("Plan your adventure with our weekly operating hours!")
 
+    hours = {
+        "Monday": "10:00 AM – 7:00 PM",
+        "Tuesday": "10:00 AM – 7:00 PM",
+        "Wednesday": "10:00 AM – 7:00 PM",
+        "Thursday": "10:00 AM – 7:00 PM",
+        "Friday": "10:00 AM – 9:00 PM",
+        "Saturday": "9:00 AM – 9:00 PM",
+        "Sunday": "9:00 AM – 8:00 PM"
+    }
+
+    for day, opening_hours in hours.items():
+        st.write(f"**{day}:** {opening_hours}")
+
+    st.caption("Last admissions are 1 hour before closing time.")
+
+    if st.button("Close", key="close_hours"):
+        st.rerun()
+
+
+@st.dialog("WonderWorld Park Map")
+def show_park_map():
+    st.write("Explore WonderWorld before your adventure!")
+
+    # Replace with your actual park map later
+    st.info("🗺️ Park map coming soon!")
+
+    # When your JPG is ready, replace st.info() with:
+    # st.image(
+    #     str(BASE_DIR / "assets/main/parkMap.jpg"),
+    #     use_container_width=True
+    # )
+
+    if st.button("Close", key="close_map"):
+        st.rerun()
 #################################################################
 ######################## HEADER DESIGN ##########################
 #################################################################
@@ -164,6 +201,18 @@ st.html("""
             color: #555555;
         }
 
+        .getting-link {
+            color: #a67c52;
+            font-size: 15px;
+            font-weight: 500;
+            text-decoration: underline;
+            text-underline-offset: 4px;
+        }
+
+        .getting-link:hover {
+            color: #8b3030;
+        }
+        
         @media (max-width: 800px) {
             .getting-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -175,20 +224,91 @@ st.html("""
                 grid-template-columns: 1fr;
             }
         }
+        .getting-heading {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 65px 35px 35px;
+        }
+
+        .getting-heading h2 {
+            color: #8B3030;
+            font-size: 42px;
+            margin-bottom: 12px;
+        }
+
+        .getting-heading p {
+            color: #666666;
+            font-size: 18px;
+        }
+
+        .st-key-getting_links {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 35px 65px;
+        }
+
+        /* Modal buttons */
+        .st-key-getting_links [data-testid="stButton"] button {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            min-height: 0 !important;
+
+            color: #0066CC !important;
+            font-size: 15px !important;
+            font-weight: 400 !important;
+            text-decoration: underline !important;
+            text-underline-offset: 3px;
+        }
+
+        /* Page navigation links */
+        .st-key-getting_links [data-testid="stPageLink"] a {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            min-height: 0 !important;
+
+            color: #0066CC !important;
+            font-size: 15px !important;
+            font-weight: 400 !important;
+            text-decoration: underline !important;
+            text-underline-offset: 3px;
+        }
+
+        /* Ensure nested link text inherits the blue colour */
+        .st-key-getting_links [data-testid="stPageLink"] a * {
+            color: inherit !important;
+        }
+
+        /* Hover effect */
+        .st-key-getting_links [data-testid="stButton"] button:hover,
+        .st-key-getting_links [data-testid="stPageLink"] a:hover {
+            color: #004499 !important;
+            background: transparent !important;
+            border: none !important;
+        }
+
+        /* Pointer cursor */
+        .st-key-getting_links [data-testid="stButton"] button,
+        .st-key-getting_links [data-testid="stPageLink"] a {
+            cursor: pointer !important;
+        }
     </style>
 
-    <section class="getting-around">
+    <div class="getting-heading">
+        <h2>Getting Around Here</h2>
+        <p>Everything you need to know before your adventure begins.</p>
+    </div>
+""")
 
-        <h2 class="getting-title">
-            Getting Around Here
-        </h2>
+with st.container(key="getting_links"):
 
-        <p class="getting-subtitle">
-            Everything you need to know before your adventure begins.
-        </p>
+    col1, col2, col3, col4 = st.columns(4, gap="large")
 
-        <div class="getting-grid">
-
+    with col1:
+        st.html("""
             <div class="getting-item">
                 <div class="getting-icon">🕙</div>
                 <h3>Opening Hours</h3>
@@ -198,7 +318,13 @@ st.html("""
                     before your visit.
                 </p>
             </div>
+        """)
 
+        if st.button("View Opening Hours", key="view_hours"):
+            show_opening_hours()
+
+    with col2:
+        st.html("""
             <div class="getting-item">
                 <div class="getting-icon">🎟️</div>
                 <h3>Tickets & Admission</h3>
@@ -208,7 +334,15 @@ st.html("""
                     day at WonderWorld.
                 </p>
             </div>
+        """)
 
+        st.page_link(
+            "pages/3_Tickets.py",
+            label="View Tickets & Admission"
+        )
+
+    with col3:
+        st.html("""
             <div class="getting-item">
                 <div class="getting-icon">🗺️</div>
                 <h3>Explore the Park</h3>
@@ -218,7 +352,13 @@ st.html("""
                     experiences for everyone.
                 </p>
             </div>
+        """)
 
+        if st.button("View Park Map", key="view_map"):
+            show_park_map()
+
+    with col4:
+        st.html("""
             <div class="getting-item">
                 <div class="getting-icon">📅</div>
                 <h3>Plan My Visit</h3>
@@ -228,11 +368,13 @@ st.html("""
                     and visiting preferences.
                 </p>
             </div>
+        """)
 
-        </div>
+        st.page_link(
+            "pages/2_Park_Planner.py",
+            label="Start Planning"
+        )
 
-    </section>
-""")
 #################################################################
 ##################### ATTRACTIONS DESIGN ########################
 #################################################################

@@ -55,8 +55,13 @@ planner = st.Page(
     title="Plan My Visit"
 )
 
+tickets = st.Page(
+    "pages/3_Tickets.py",
+    title="Buy A Ticket"
+)
+
 pg = st.navigation(
-    [home, attractions, planner],
+    [home, attractions, planner, tickets],
     position="top"
 )
 
