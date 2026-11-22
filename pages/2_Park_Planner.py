@@ -2,6 +2,7 @@ import streamlit as st
 from datetime import date
 from database.attractions import attractions, shows, vibe_categories
 from src.validation import generate_itinerary
+from src.init import show_footer
 
 st.title("Your Adventure, Your Way")
 
@@ -272,3 +273,9 @@ with middle:
                     st.session_state.children = 0
                     st.session_state.visit_date = date.today()
                     st.rerun()
+
+# ###############################################################
+# ########################## FOOTER #############################
+# ###############################################################
+
+show_footer()

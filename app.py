@@ -28,7 +28,20 @@ st.markdown("""
     [data-testid="stHeader"] button {
         color: #F4F4F4 !important;
     }
+    
 
+    [data-testid="stMain"] {
+        overflow-x: clip;
+    }
+
+    /* Normal spacing below the navbar */
+    [data-testid="stMainBlockContainer"] {
+        max-width: 100% !important;
+        padding-top: 3rem !important;
+        padding-bottom: 2rem !important;
+        padding-left: 5% !important;
+        padding-right: 5% !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 

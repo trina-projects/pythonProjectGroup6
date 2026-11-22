@@ -2,6 +2,7 @@ import streamlit as st
 import base64
 from pathlib import Path
 from database.attractions import attractions, category_descriptions, shows
+from src.init import show_footer
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -383,7 +384,7 @@ st.html("""
     <style>
 
         /* Main attractions section */
-        .st-key-attractions_grid {
+        .st-key-home_attractions_grid {
             width: 100%;
             max-width: 1400px;
             margin-left: auto;
@@ -411,12 +412,12 @@ st.html("""
         }
 
         /* Attraction image container */
-        .st-key-attractions_grid [data-testid="stImage"] {
+        .st-key-home_attractions_grid [data-testid="stImage"] {
             width: 100%;
         }
 
         /* Attraction image */
-        .st-key-attractions_grid [data-testid="stImage"] img {
+        .st-key-home_attractions_grid [data-testid="stImage"] img {
             width: 100%;
             height: 280px;
             object-fit: cover;
@@ -476,7 +477,7 @@ st.html("""
 ######################## ATTRACTIONS GRID #######################
 #################################################################
 
-with st.container(key="attractions_grid"):
+with st.container(key="home_attractions_grid"):
 
     # Section heading
     st.html("""
@@ -635,107 +636,8 @@ with st.container(key="attractions_grid"):
         # Add spacing between rows
         st.html('<div class="grid-spacing"></div>')
 
-#################################################################
-############################ FOOTER #############################
-#################################################################
+# ###############################################################
+# ########################## FOOTER #############################
+# ###############################################################
 
-st.html("""
-    <style>
-        .wonder-footer {
-            background-color: #142B40;
-            color: #ffffff;
-            padding: 65px 40px 25px;
-            margin-top: 60px;
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            gap: 50px;
-        }
-
-        .footer-brand {
-            font-size: 30px;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-
-        .footer-heading {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 18px;
-        }
-
-        .wonder-footer p {
-            color: #cccccc;
-            line-height: 1.8;
-        }
-
-        .footer-links a {
-            display: block;
-            color: #cccccc;
-            text-decoration: none;
-            margin-bottom: 12px;
-        }
-
-        .footer-links a:hover {
-            color: #ffffff;
-            text-decoration: underline;
-        }
-
-        .footer-bottom {
-            max-width: 1200px;
-            margin: 45px auto 0;
-            padding-top: 20px;
-            border-top: 1px solid #526273;
-            text-align: center;
-            color: #bbbbbb;
-            font-size: 14px;
-        }
-
-        @media (max-width: 700px) {
-            .footer-content {
-                grid-template-columns: 1fr;
-                gap: 25px;
-            }
-        }
-    </style>
-
-    <footer class="wonder-footer">
-
-        <div class="footer-content">
-
-            <div>
-                <h2 class="footer-brand">🎡 WonderWorld</h2>
-                <p>
-                    Where every adventure begins!
-                    Discover thrilling rides, magical
-                    experiences and unforgettable memories.
-                </p>
-            </div>
-
-            <div class="footer-links">
-                <h3 class="footer-heading">Explore</h3>
-                <a href="/">Home</a>
-                <a href="/Attractions">Attractions</a>
-                <a href="/Park_Planner">Plan My Visit</a>
-            </div>
-
-            <div>
-                <h3 class="footer-heading">Visitor Information</h3>
-                <p>Opening Hours</p>
-                <p>Tickets & Admission</p>
-                <p>Park Information</p>
-            </div>
-
-        </div>
-
-        <div class="footer-bottom">
-            © 2026 WonderWorld. All rights reserved.
-            <p>Fictional theme park · Group 6</p>
-        </div>
-
-    </footer>
-""")
+show_footer()

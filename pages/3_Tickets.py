@@ -1,6 +1,7 @@
 import streamlit as st
 from datetime import date
 from src.validation import calculate_total
+from src.init import show_footer
 
 # Page styling
 st.html("""
@@ -152,3 +153,9 @@ with right:
                 st.write(
                     f"Total Amount: S${total:.2f}"
                 )
+
+# ###############################################################
+# ########################## FOOTER #############################
+# ###############################################################
+
+show_footer()
