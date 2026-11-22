@@ -1,3 +1,4 @@
+import random
 attractions = {
     "Thrill Rides": [
         {
@@ -148,4 +149,23 @@ category_descriptions = {
         "Embark on exciting expeditions and discover "
         "hidden wonders around every corner."
     )
+}
+
+vibe_categories = {
+    "Chill & Relaxing": [
+        "Scenic Rides",
+        "Family Rides"
+    ],
+
+    "Thrill Seeker": [
+        "Thrill Rides",
+        "Adventure Rides"
+    ],
+
+    "Fun & Playful": [
+        "Family Rides",
+        "Water Rides"
+    ],
+
+    "A Bit of Everything": random.sample(list(attractions.keys()),5)
 }

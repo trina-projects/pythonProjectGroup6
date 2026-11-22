@@ -18,193 +18,317 @@ with open(image_path, "rb") as image:
     encoded_image = base64.b64encode(image.read()).decode()
 
 st.html(f"""
-<style>
+    <style>
 
-    .stApp {{
-        background-color: #ffffff;
-    }}
-
-    .block-container {{
-        padding-top: 0rem;
-        padding-left: 0rem;
-        padding-right: 0rem;
-        max-width: 100%;
-    }}
-
-    .hero-section {{
-        background-image:
-            linear-gradient(
-                rgba(0, 0, 0, 0.2),
-                rgba(0, 0, 0, 0.4)
-            ),
-            url("data:image/webp;base64,{encoded_image}");
-
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-
-        height: 100vh;
-
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-
-        text-align: center;
-    }}
-
-    .rainbow-title {{
-        background: linear-gradient(
-            90deg,
-            #ff5e5e,
-            #ffb347,
-            #ffff66,
-            #66ff99,
-            #66eaff,
-            #b388ff,
-            #ff77ff,
-            #ff5e5e
-        );
-
-        background-size: 200% auto;
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-
-        animation: rainbowFlow 5s linear infinite;
-
-        font-size: 60px;
-        font-weight: bold;
-        margin-bottom: 10px;
-        filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4))
-                drop-shadow(0 4px 6px rgba(0, 0, 0, 0.6));
-    }}
-
-    @keyframes rainbowFlow {{
-        from {{
-            background-position: 200% center;
+        .stApp {{
+            background-color: #ffffff;
         }}
-        to {{
-            background-position: 0% center;
+
+        .block-container {{
+            padding: 0 !important;
+            max-width: 100% !important;
         }}
-    }}
 
-    .hero-subtitle {{
-        color: white;
-        font-size: 24px;
-        margin-top: 10px;
-    }}
+        /* Remove the gap between Streamlit elements */
+        [data-testid="stMainBlockContainer"] > [data-testid="stVerticalBlock"] {{
+            gap: 0 !important;
+        }}
 
-</style>
+        .hero-section {{
+            background-image:
+                linear-gradient(
+                    rgba(0, 0, 0, 0.2),
+                    rgba(0, 0, 0, 0.4)
+                ),
+                url("data:image/webp;base64,{encoded_image}");
 
-<div class="hero-section">
-    <h1 class="rainbow-title">
-        Welcome to WonderWorld!
-    </h1>
-    <p class="hero-subtitle">
-        Your adventure starts here!
-    </p>
-</div>
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+
+            height: 100vh;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            text-align: center;
+        }}
+
+        .rainbow-title {{
+            background: linear-gradient(
+                90deg,
+                #ff5e5e,
+                #ffb347,
+                #ffff66,
+                #66ff99,
+                #66eaff,
+                #b388ff,
+                #ff77ff,
+                #ff5e5e
+            );
+
+            background-size: 200% auto;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+
+            animation: rainbowFlow 5s linear infinite;
+
+            font-size: 60px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4))
+                    drop-shadow(0 4px 6px rgba(0, 0, 0, 0.6));
+        }}
+
+        @keyframes rainbowFlow {{
+            from {{
+                background-position: 200% center;
+            }}
+            to {{
+                background-position: 0% center;
+            }}
+        }}
+
+        .hero-subtitle {{
+            color: white;
+            font-size: 24px;
+            margin-top: 10px;
+        }}
+
+    </style>
+
+    <div class="hero-section">
+        <h1 class="rainbow-title">
+            Welcome to WonderWorld!
+        </h1>
+        <p class="hero-subtitle">
+            Your adventure starts here!
+        </p>
+    </div>
+""")
+
+#################################################################
+###################### GETTING AROUND HERE ######################
+#################################################################
+
+st.html("""
+    <style>
+        .getting-around {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 75px 35px;
+            color: #142B40;
+        }
+
+        .getting-title {
+            font-size: 42px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            color: #8B3030;
+        }
+
+        .getting-subtitle {
+            font-size: 18px;
+            color: #666666;
+            margin-bottom: 45px;
+        }
+
+        .getting-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+        }
+
+        .getting-item {
+            padding: 10px 0;
+        }
+
+        .getting-icon {
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        .getting-item h3 {
+            font-size: 21px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            color: #142B40;
+        }
+
+        .getting-item p {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #555555;
+        }
+
+        @media (max-width: 800px) {
+            .getting-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .getting-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+    <section class="getting-around">
+
+        <h2 class="getting-title">
+            Getting Around Here
+        </h2>
+
+        <p class="getting-subtitle">
+            Everything you need to know before your adventure begins.
+        </p>
+
+        <div class="getting-grid">
+
+            <div class="getting-item">
+                <div class="getting-icon">🕙</div>
+                <h3>Opening Hours</h3>
+                <p>
+                    Plan ahead for your adventure.
+                    Check our park's operating hours
+                    before your visit.
+                </p>
+            </div>
+
+            <div class="getting-item">
+                <div class="getting-icon">🎟️</div>
+                <h3>Tickets & Admission</h3>
+                <p>
+                    Discover our ticket options
+                    and get ready for an unforgettable
+                    day at WonderWorld.
+                </p>
+            </div>
+
+            <div class="getting-item">
+                <div class="getting-icon">🗺️</div>
+                <h3>Explore the Park</h3>
+                <p>
+                    Discover exciting attractions,
+                    magical performances and
+                    experiences for everyone.
+                </p>
+            </div>
+
+            <div class="getting-item">
+                <div class="getting-icon">📅</div>
+                <h3>Plan My Visit</h3>
+                <p>
+                    Create a personalised itinerary
+                    based on your adventure vibe
+                    and visiting preferences.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
 """)
 #################################################################
 ##################### ATTRACTIONS DESIGN ########################
 #################################################################
 
 st.html("""
-<style>
+    <style>
 
-    /* Main attractions section */
-    .st-key-attractions_grid {
-        max-width: 1000px;
-        margin: 0 auto;
-        padding: 60px 30px;
-        background-color: #ffffff;
-    }
+        /* Main attractions section */
+        .st-key-attractions_grid {
+            width: 100%;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 60px 30px;
+            box-sizing: border-box;
+            background-color: #ffffff;
+        }
 
-    /* Main section heading */
-    .section-title {
-        color: #142B40;
-        text-align: center;
-        font-size: 42px;
-        font-weight: bold;
-        margin-bottom: 10px;
-    }
+        /* Main section heading */
+        .section-title {
+            color: #142B40;
+            text-align: center;
+            font-size: 42px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
 
-    /* Main section subtitle */
-    .section-subtitle {
-        color: #666666;
-        text-align: center;
-        font-size: 18px;
-        margin-bottom: 40px;
-    }
+        /* Main section subtitle */
+        .section-subtitle {
+            color: #666666;
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 40px;
+        }
 
-    /* Attraction images */
-    .st-key-attractions_grid
-    [data-testid="stImage"] img {
-        width: 100%;
-        aspect-ratio: 4 / 3;
-        height: auto;
-        object-fit: cover;
-        border-radius: 3px;
-    }
+        /* Attraction image container */
+        .st-key-attractions_grid [data-testid="stImage"] {
+            width: 100%;
+        }
 
-    /* Category title */
-    .category-title {
-        color: #142B40;
-        font-size: 26px;
-        font-weight: 500;
-        margin-top: 15px;
-        margin-bottom: 12px;
-    }
+        /* Attraction image */
+        .st-key-attractions_grid [data-testid="stImage"] img {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
 
-    /* Category description */
-    .category-description {
-        color: #444444;
-        font-size: 17px;
-        line-height: 1.8;
-        margin-bottom: 15px;
-    }
+        /* Category title */
+        .category-title {
+            color: #142B40;
+            font-size: 26px;
+            font-weight: 500;
+            margin-top: 8px;
+            margin-bottom: 8px;
+        }
 
-    /* Ride name tags */
-    .ride-tag {
-        display: inline-block;
-        background-color: #f4f4f4;
-        color: #333333;
-        border: 1px solid #e5e5e5;
-        border-radius: 6px;
-        padding: 6px 12px;
-        font-size: 13px;
-        margin-right: 6px;
-        margin-bottom: 8px;
-    }
+        /* Category description */
+        .category-description {
+            color: #444444;
+            font-size: 17px;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
 
-    /* Space between rows */
-    .grid-spacing {
-        height: 40px;
-    }
+        /* Ride name tags */
+        .ride-tag {
+            display: inline-block;
+            background-color: #f4f4f4;
+            color: #333333;
+            border: 1px solid #e5e5e5;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 13px;
+            margin-right: 6px;
+            margin-bottom: 8px;
+        }
 
-    /* Page background */
-    .stApp {
-        background-color: #ffffff;
-    }
+        /* Space between rows */
+        .grid-spacing {
+            height: 40px;
+        }
 
-    /* Classification buttons */
-    [data-testid="stSegmentedControl"] button {
-        border-radius: 30px !important;
-        padding: 10px 22px !important;
-        font-size: 16px !important;
-    }
+        /* Page background */
+        .stApp {
+            background-color: #ffffff;
+        }
 
-    /* Attraction images */
-    [data-testid="stImage"] img {
-        width: 80%;
-        aspect-ratio: 4 / 3;
-        object-fit: cover;
-        border-radius: 4px;
-    }
+        /* Classification buttons */
+        [data-testid="stSegmentedControl"] button {
+            border-radius: 30px !important;
+            padding: 10px 22px !important;
+            font-size: 16px !important;
+        }
 
-
-</style>
+    </style>
 """)
 #################################################################
 ######################## ATTRACTIONS GRID #######################
@@ -224,9 +348,10 @@ with st.container(key="attractions_grid"):
         </p>
     """)
 
-    #############################################################
-    # CLASSIFICATION BAR
-    #############################################################
+
+#############################################################
+# CLASSIFICATION BAR
+#############################################################
 
     classification = st.segmented_control(
         "Attraction Classification",
@@ -253,9 +378,9 @@ with st.container(key="attractions_grid"):
             label_visibility="collapsed"
         )
 
-    #############################################################
-    # FILTER ATTRACTIONS
-    #############################################################
+#############################################################
+# FILTER ATTRACTIONS
+#############################################################
 
     display_attractions = []
 
@@ -295,13 +420,13 @@ with st.container(key="attractions_grid"):
     # DISPLAY FILTERED ATTRACTIONS
     #############################################################
 
-    for i in range(0, len(display_attractions), 2):
+    for i in range(0, len(display_attractions), 3):
 
-        columns = st.columns(2, gap="large")
+        columns = st.columns(3, gap="large")
 
         for col, item in zip(
             columns,
-            display_attractions[i:i + 2]
+            display_attractions[i:i + 3]
         ):
 
             with col:
@@ -367,3 +492,108 @@ with st.container(key="attractions_grid"):
 
         # Add spacing between rows
         st.html('<div class="grid-spacing"></div>')
+
+#################################################################
+############################ FOOTER #############################
+#################################################################
+
+st.html("""
+    <style>
+        .wonder-footer {
+            background-color: #142B40;
+            color: #ffffff;
+            padding: 65px 40px 25px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 50px;
+        }
+
+        .footer-brand {
+            font-size: 30px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .footer-heading {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 18px;
+        }
+
+        .wonder-footer p {
+            color: #cccccc;
+            line-height: 1.8;
+        }
+
+        .footer-links a {
+            display: block;
+            color: #cccccc;
+            text-decoration: none;
+            margin-bottom: 12px;
+        }
+
+        .footer-links a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 45px auto 0;
+            padding-top: 20px;
+            border-top: 1px solid #526273;
+            text-align: center;
+            color: #bbbbbb;
+            font-size: 14px;
+        }
+
+        @media (max-width: 700px) {
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+        }
+    </style>
+
+    <footer class="wonder-footer">
+
+        <div class="footer-content">
+
+            <div>
+                <h2 class="footer-brand">🎡 WonderWorld</h2>
+                <p>
+                    Where every adventure begins!
+                    Discover thrilling rides, magical
+                    experiences and unforgettable memories.
+                </p>
+            </div>
+
+            <div class="footer-links">
+                <h3 class="footer-heading">Explore</h3>
+                <a href="/">Home</a>
+                <a href="/Attractions">Attractions</a>
+                <a href="/Park_Planner">Plan My Visit</a>
+            </div>
+
+            <div>
+                <h3 class="footer-heading">Visitor Information</h3>
+                <p>Opening Hours</p>
+                <p>Tickets & Admission</p>
+                <p>Park Information</p>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            © 2026 WonderWorld. All rights reserved.
+            <p>Fictional theme park · Group 6</p>
+        </div>
+
+    </footer>
+""")
