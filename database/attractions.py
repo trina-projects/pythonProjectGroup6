@@ -6,7 +6,13 @@ attractions = {
             "capacity": 24,
             "duration": 5,
             "queue_length": 120,
-            "image": "assets/attractions/thrill rides/megaCoaster.jpg"
+            "image": "assets/attractions/thrill rides/megaCoaster.jpg",
+
+            "description": "Experience high-speed turns and thrilling drops.",
+            "type": "High-speed Roller Coaster",
+            "location": "Adventure Zone",
+            "height_restriction": "Minimum 120 cm",
+            "advisory": "Not recommended for guests with certain medical conditions."
         },
         {
             "name": "Sky Drop",

@@ -46,3 +46,21 @@ def generate_itinerary(attractions, vibe_categories, selected_vibe):
     itinerary.sort(key=lambda ride: ride["waiting_time"])
 
     return itinerary
+
+def calculate_total(adults, children):
+
+    ticket_prices = {
+        "Adult": 60,
+        "Child": 40
+    }
+
+    total = (
+        adults * ticket_prices["Adult"]
+        + children * ticket_prices["Child"]
+    )
+
+    # Apply 10% family discount
+    if adults >= 2 and children >= 2:
+        total *= 0.9
+
+    return total
