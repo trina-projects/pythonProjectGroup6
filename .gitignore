@@ -1,0 +1,38 @@
+
+# ============================================
+# WonderWorld - Git Ignore
+# ============================================
+
+# Python virtual environment
+.venv/
+venv/
+env/
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Streamlit secrets (IMPORTANT!)
+.streamlit/secrets.toml
+
+# Environment variables and credentials
+.env
+.env.*
+!.env.example
+
+# IDE settings
+.vscode/
+.idea/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Testing and cache files
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Logs
+*.log

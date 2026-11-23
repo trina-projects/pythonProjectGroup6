@@ -1,4 +1,8 @@
 import math
+import smtplib
+from email.message import EmailMessage
+import streamlit as st
+
 
 ####################################
 ########## ITINERARY ###############
@@ -17,36 +21,6 @@ def estimate_waiting_time(ride):
     return batches * duration
 
 
-def generate_itinerary(attractions, vibe_categories, selected_vibe):
-
-    # Find the categories associated with the selected vibe
-    preferred_categories = vibe_categories.get(selected_vibe, [])
-
-    itinerary = []
-
-    # Loop through every attraction category
-    for category, rides in attractions.items():
-
-        if category in preferred_categories:
-
-            for ride in rides:
-
-                waiting_time = estimate_waiting_time(ride)
-
-                itinerary.append({
-                    "name": ride["name"],
-                    "category": category,
-                    "duration": ride["duration"],
-                    "waiting_time": waiting_time,
-                    "total_time": ride["duration"] + waiting_time,
-                    "image": ride.get("image")
-                })
-
-    # Recommend attractions with shorter estimated waits first
-    itinerary.sort(key=lambda ride: ride["waiting_time"])
-
-    return itinerary
-
 def calculate_total(adults, children):
 
     ticket_prices = {
@@ -64,3 +38,81 @@ def calculate_total(adults, children):
         total *= 0.9
 
     return total
+
+def calculate_ride_time(ride):
+    capacity = ride["capacity"]
+    duration = ride["duration"]
+    queue_length = ride["queue_length"]
+
+    # Estimate the number of ride cycles needed
+    if capacity <= 0:
+        return None
+
+    cycles = (queue_length + capacity - 1) // capacity
+
+    waiting_time = cycles * duration
+    total_time = waiting_time + duration
+
+    return {
+        "waiting_time": waiting_time,
+        "ride_duration": duration,
+        "total_time": total_time
+    }
+
+
+##########################
+###### EMAIL ############
+############################
+def send_itinerary_email(
+    recipient,
+    itinerary,
+    total_duration,
+    park_name,
+    park_location,
+    park_hours
+):
+    sender = st.secrets["EMAIL_ADDRESS"]
+    password = st.secrets["EMAIL_APP_PASSWORD"]
+
+    message = EmailMessage()
+
+    message["Subject"] = f"Your {park_name} Adventure Itinerary"
+    message["From"] = sender
+    message["To"] = recipient
+
+    lines = [
+        f"Welcome to {park_name}!",
+        "",
+        "YOUR ADVENTURE ITINERARY",
+        "",
+        f"Location: {park_location}",
+        f"Opening Hours: {park_hours}",
+        "",
+        "Your Selected Attractions:",
+        ""
+    ]
+
+    for index, ride in enumerate(itinerary, start=1):
+        lines.extend([
+            f"{index}. {ride['name']}",
+            f"   Ride: {ride['ride_duration']} min",
+            f"   Estimated wait: {ride['waiting_time']} min",
+            f"   Total: {ride['total_time']} min",
+            ""
+        ])
+
+    lines.extend([
+        f"Total Estimated Duration: {total_duration} minutes",
+        "",
+        "Waiting times are illustrative estimates.",
+        "Walking, breaks and loading times are excluded.",
+        "",
+        "Have a wonderful adventure!",
+        "The WonderWorld Team"
+    ])
+
+    message.set_content("\n".join(lines))
+
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=15) as smtp:
+        smtp.login(sender, password)
+        smtp.send_message(message)
