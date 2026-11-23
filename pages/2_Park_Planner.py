@@ -433,12 +433,9 @@ if st.session_state.planner_generated and selected_names:
 
                         st.success("Your itinerary has been emailed!")
 
-                    except Exception:
-                        st.error(
-                            "Unable to send the email. "
-                            "Please check the email configuration "
-                            "and try again."
-                        )
+                    except Exception as e:
+                        st.error(f"Failed to send email: {type(e).__name__}")
+                        st.write(str(e))
 
 # -------------------------------------------------
 # FOOTER

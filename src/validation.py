@@ -1,8 +1,10 @@
 import math
-import smtplib
 from email.message import EmailMessage
+import ssl
+import smtplib
 import streamlit as st
 
+context = ssl.create_default_context()
 
 ####################################
 ########## ITINERARY ###############
@@ -71,9 +73,8 @@ def send_itinerary_email(
     park_location,
     park_hours
 ):
-    sender = st.secrets["EMAIL_ADDRESS"]
-    password = st.secrets["EMAIL_APP_PASSWORD"]
-
+    sender = st.secrets["EMAIL_ADDRESS"].strip()
+    password = st.secrets["EMAIL_APP_PASSWORD"].replace(" ", "").strip()
     message = EmailMessage()
 
     message["Subject"] = f"Your {park_name} Adventure Itinerary"
@@ -113,6 +114,15 @@ def send_itinerary_email(
 
     message.set_content("\n".join(lines))
 
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=15) as smtp:
+    with smtplib.SMTP("smtp.gmail.com", 587, timeout=30) as smtp:
+        smtp.ehlo()
+        smtp.starttls(context=context)
+        smtp.ehlo()
+
         smtp.login(sender, password)
+
+        print("Gmail authentication successful!")
+
         smtp.send_message(message)
+
+        print("Email accepted by Gmail!")
