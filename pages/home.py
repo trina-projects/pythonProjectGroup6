@@ -33,14 +33,10 @@ def show_opening_hours():
 def show_park_map():
     st.write("Explore WonderWorld before your adventure!")
 
-    # Replace with your actual park map later
-    st.info("🗺️ Park map coming soon!")
-
-    # When your JPG is ready, replace st.info() with:
-    # st.image(
-    #     str(BASE_DIR / "assets/main/parkMap.jpg"),
-    #     use_container_width=True
-    # )
+    st.image(
+        str(BASE_DIR/"assets/main/parkMap.jpg"),
+        use_container_width=True
+    )
 
     if st.button("Close", key="close_map"):
         st.rerun()

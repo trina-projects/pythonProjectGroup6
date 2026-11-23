@@ -269,7 +269,7 @@ shows = {
             "image": "assets/shows/wingsOfTime.jpg"
         },
         {
-            "name": "The Dreamweaver’s Tent",
+            "name": "The Dreamweavers Tent",
             "description": (
                 "Step into a magical world of storytelling, "
                 "music and spectacular live performances."
