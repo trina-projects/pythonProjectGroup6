@@ -29,17 +29,19 @@ def show_opening_hours():
         st.rerun()
 
 
-@st.dialog("WonderWorld Park Map")
+
+@st.dialog("WonderWorld Park Map", width="large")
 def show_park_map():
     st.write("Explore WonderWorld before your adventure!")
 
     st.image(
-        str(BASE_DIR/"assets/main/parkMap.jpg"),
+        str(BASE_DIR / "assets/main/parkMap.jpg"),
         use_container_width=True
     )
 
     if st.button("Close", key="close_map"):
         st.rerun()
+
 #################################################################
 ######################## HEADER DESIGN ##########################
 #################################################################

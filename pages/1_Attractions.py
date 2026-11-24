@@ -4,6 +4,8 @@ import base64
 import html
 from database.attractions import attractions, shows
 from src.init import show_footer
+from src.validation import get_recommendations
+from html import escape
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -16,6 +18,89 @@ st.html("""
         background-position: center;
         background-repeat: no-repeat;
         border-radius: 10px;
+    }
+    .recommendation-heading {
+        text-align: center;
+        color: #142B40;
+        font-size: 32px;
+        font-weight: 700;
+        margin-top: 25px;
+        margin-bottom: 5px;
+    }
+
+    .recommendation-subtitle {
+        text-align: center;
+        color: #777777;
+        font-size: 16px;
+        margin-bottom: 25px;
+    }
+
+    /* Standardise image dimensions */
+    .st-key-recommendation_cards [data-testid="stImage"],
+    .st-key-recommendation_cards [data-testid="stImage"] > div {
+        width: 100% !important;
+    }
+
+    .st-key-recommendation_cards [data-testid="stImage"] img {
+        width: 100% !important;
+        height: 190px !important;
+        object-fit: cover !important;
+        object-position: center !important;
+        border-radius: 10px !important;
+    }
+
+    .recommendation-name {
+        color: #142B40;
+        font-size: 19px;
+        font-weight: 700;
+        min-height: 48px;
+        margin-top: 8px;
+    }
+
+    .recommendation-category {
+        color: #777777;
+        font-size: 14px;
+        min-height: 25px;
+    }
+
+    /* Left and right carousel arrows */
+    .st-key-carousel_previous button,
+    .st-key-carousel_next button {
+        border-radius: 50% !important;
+        width: 44px !important;
+        height: 44px !important;
+        min-height: 44px !important;
+        padding: 0 !important;
+        font-size: 22px !important;
+        background-color: white !important;
+        color: #142B40 !important;
+        border: 1px solid #D0D5DA !important;
+    }
+
+    .st-key-carousel_previous button:hover,
+    .st-key-carousel_next button:hover {
+        background-color: #91C3C2 !important;
+        border-color: #91C3C2 !important;
+    }
+
+    /* Pagination dots */
+    .st-key-carousel_dots button {
+        border: none !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        min-height: 28px !important;
+        color: #B8C4C8 !important;
+        font-size: 18px !important;
+    }
+
+    .st-key-carousel_dots button:hover {
+        color: #91C3C2 !important;
+    }
+
+    .st-key-carousel_dots button[kind="primary"] {
+        color: #142B40 !important;
+        background: transparent !important;
     }
 </style>
 """)
@@ -53,7 +138,193 @@ def get_all_attractions():
 
     return items
 
+def explore_attraction(item):
 
+    st.session_state.selected_attraction = item
+
+    # Reset the recommendation carousel
+    st.session_state.recommendation_source = None
+    st.session_state.recommendation_index = 0
+
+def show_recommendations(current_name):
+
+    st.divider()
+
+    st.html("""
+        <h2 class="recommendation-heading">
+            Discover More Adventures
+        </h2>
+
+        <p class="recommendation-subtitle">
+            There's always more magic waiting
+            for you at WonderWorld.
+        </p>
+    """)
+
+    # ###########################################################
+    # GENERATE RANDOM RECOMMENDATIONS
+    # ###########################################################
+
+    if (
+        "recommendation_source" not in st.session_state
+        or st.session_state.recommendation_source != current_name
+    ):
+
+        st.session_state.recommended_items = (
+            get_recommendations(current_name, limit=5)
+        )
+
+        st.session_state.recommendation_source = current_name
+        st.session_state.recommendation_index = 0
+
+    recommendations = st.session_state.recommended_items
+
+    total_items = len(recommendations)
+
+    if total_items == 0:
+        st.info("No other attractions available.")
+        return
+
+    visible_count = min(4, total_items)
+
+    start = st.session_state.recommendation_index
+
+
+    # ###########################################################
+    # CAROUSEL NAVIGATION FUNCTIONS
+    # ###########################################################
+
+    def move_carousel(direction):
+
+        st.session_state.recommendation_index = (
+            st.session_state.recommendation_index + direction
+        ) % total_items
+
+
+    def jump_to_slide(index):
+
+        st.session_state.recommendation_index = index
+
+
+    # ###########################################################
+    # INFINITE LOOP LOGIC
+    # ###########################################################
+
+    visible_items = [
+        recommendations[(start + i) % total_items]
+        for i in range(visible_count)
+    ]
+
+
+    # ###########################################################
+    # CAROUSEL LAYOUT
+    # ###########################################################
+
+    previous_col, cards_col, next_col = st.columns(
+        [0.5, 12, 0.5],
+        vertical_alignment="center",
+        gap="small"
+    )
+
+
+    # LEFT ARROW
+    with previous_col:
+
+        st.button(
+            "❮",
+            key="carousel_previous",
+            on_click=move_carousel,
+            args=(-1,),
+            disabled=total_items <= 1
+        )
+
+
+    # RECOMMENDATION CARDS
+    with cards_col:
+
+        with st.container(key="recommendation_cards"):
+
+            columns = st.columns(visible_count)
+
+            for index, item in enumerate(visible_items):
+
+                details = item["details"]
+                name = details["name"]
+                category = item["category"]
+
+                with columns[index]:
+
+                    with st.container(border=True):
+
+                        st.image(
+                            str(BASE_DIR / details["image"]),
+                            use_container_width=True
+                        )
+
+                        st.html(f"""
+                            <div class="recommendation-name">
+                                {escape(name)}
+                            </div>
+
+                            <div class="recommendation-category">
+                                {escape(category)}
+                            </div>
+                        """)
+
+                        st.button(
+                            "Explore →",
+                            key=f"recommendation_{name}",
+                            use_container_width=True,
+                            on_click=explore_attraction,
+                            args=(item,)
+                        )
+
+    # RIGHT ARROW
+    with next_col:
+
+        st.button(
+            "❯",
+            key="carousel_next",
+            on_click=move_carousel,
+            args=(1,),
+            disabled=total_items <= 1
+        )
+
+
+    # ###########################################################
+    # PAGINATION DOTS
+    # ###########################################################
+
+    with st.container(key="carousel_dots"):
+
+        left_space, dots_col, right_space = st.columns(
+            [4, 1.5, 4]
+        )
+
+        with dots_col:
+
+            dot_columns = st.columns(
+                total_items,
+                gap="small"
+            )
+
+            for index in range(total_items):
+
+                with dot_columns[index]:
+
+                    is_active = (
+                        index ==
+                        st.session_state.recommendation_index
+                    )
+
+                    st.button(
+                        "●" if is_active else "○",
+                        key=f"carousel_dot_{index}",
+                        type="primary" if is_active else "secondary",
+                        on_click=jump_to_slide,
+                        args=(index,),
+                        help=f"Go to position {index + 1}"
+                    )
 
 def show_attraction_banner(item):
     details = item["details"]
@@ -296,7 +567,10 @@ else:
     show_attraction_details(
         st.session_state.selected_attraction
     )
-
+if st.session_state.get("selected_attraction"):
+    show_recommendations(
+        st.session_state.selected_attraction["details"]["name"]
+    )
 
 # ###############################################################
 # ########################## FOOTER #############################
