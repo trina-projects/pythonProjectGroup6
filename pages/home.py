@@ -1,25 +1,44 @@
+# ====================================
+# HOME PAGE
+# displays park information, opening hours, park map
+# and a filterable preview of rides and shows
+# ====================================
+
+#######################################
+########## IMPORT FUNCTIONS ###########
+#######################################
+
 import streamlit as st
-import base64
-from pathlib import Path
-from database.attractions import attractions, category_descriptions, shows
+import base64 #encode local image for use in HTML
+from pathlib import Path #construct file paths
+from database.attractions import attractions, shows
 from src.init import show_footer, PARK_NAME, PARK_LOCATION, PARK_HOURS
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent #retrieves the absolute path of your project's root directory
+# Path(__file__) navigates the directory of file 
+# .resolve() converts the file into absolute, resolved file and not relative
+# parent.parent moves 2 levels up the current directory
 
+# =================================================
+# OPENING HOURS MODAL
+# =================================================
 @st.dialog("WonderWorld Opening Hours")
 def show_opening_hours():
     st.write("Plan your adventure with our weekly operating hours!")
 
+    #retrieve day and operating hours from the dictionary
     for day, hours in PARK_HOURS.items():
         st.write(f"{day}: {hours}")
 
     st.caption("Last admissions are 1 hour before closing time.")
 
-    if st.button("Close", key="close_hours"):
-        st.rerun()
+    if st.button("Close", key="close_hours"): #key = .. gives the button a unique ID so it doesnt clash with other "Close" btns
+        st.rerun() #rerun the page to close the modal
 
 
-
+# =================================================
+# PARK MAP MODAL
+# =================================================
 @st.dialog("WonderWorld Park Map", width="large")
 def show_park_map():
     st.write("Explore WonderWorld before your adventure!")
@@ -30,22 +49,20 @@ def show_park_map():
     )
 
     if st.button("Close", key="close_map"):
-        st.rerun()
+        st.rerun() #rerun the page to close the modal
 
 #################################################################
-######################## HEADER DESIGN ##########################
+######################### HEADER DESIGN #########################
 #################################################################
-
-BASE_DIR = Path(__file__).resolve().parent.parent
 
 image_path = BASE_DIR / "assets/main/themeParkMain.webp"
 
+#read image as bytes and convert to base64 text for CSS background
 with open(image_path, "rb") as image:
     encoded_image = base64.b64encode(image.read()).decode()
 
 st.html(f"""
     <style>
-
         .stApp {{
             background-color: #ffffff;
         }}
@@ -55,11 +72,12 @@ st.html(f"""
             max-width: 100% !important;
         }}
 
-        /* Remove the gap between Streamlit elements */
+        /* remove the gap between Streamlit elements */
         [data-testid="stMainBlockContainer"] > [data-testid="stVerticalBlock"] {{
             gap: 0 !important;
         }}
 
+        /* full-screen hero with dark overlay for text readability */
         .hero-section {{
             background-image:
                 linear-gradient(
@@ -82,6 +100,7 @@ st.html(f"""
             text-align: center;
         }}
 
+        /* animated rainbow gradient applied to title text */
         .rainbow-title {{
             background: linear-gradient(
                 90deg,
@@ -109,6 +128,7 @@ st.html(f"""
                     drop-shadow(0 4px 6px rgba(0, 0, 0, 0.6));
         }}
 
+        /* move gradient across the title continuously */
         @keyframes rainbowFlow {{
             from {{
                 background-position: 200% center;
@@ -137,7 +157,7 @@ st.html(f"""
 """)
 
 #################################################################
-###################### GETTING AROUND HERE ######################
+############ GETTING AROUND HERE CONTAINER DESIGN ###############
 #################################################################
 
 st.html("""
@@ -202,6 +222,7 @@ st.html("""
             color: #8b3030;
         }
         
+        /* responsive layout for smaller screens */
         @media (max-width: 800px) {
             .getting-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -236,7 +257,7 @@ st.html("""
             padding: 0 35px 65px;
         }
 
-        /* Modal buttons */
+        /* modal buttons */
         .st-key-getting_links [data-testid="stButton"] button {
             background: transparent !important;
             border: none !important;
@@ -251,7 +272,7 @@ st.html("""
             text-underline-offset: 3px;
         }
 
-        /* Page navigation links */
+        /* page navigation links */
         .st-key-getting_links [data-testid="stPageLink"] a {
             background: transparent !important;
             border: none !important;
@@ -266,12 +287,12 @@ st.html("""
             text-underline-offset: 3px;
         }
 
-        /* Ensure nested link text inherits the blue colour */
+        /* ensure nested link text inherits the blue colour */
         .st-key-getting_links [data-testid="stPageLink"] a * {
             color: inherit !important;
         }
 
-        /* Hover effect */
+        /* hover effect */
         .st-key-getting_links [data-testid="stButton"] button:hover,
         .st-key-getting_links [data-testid="stPageLink"] a:hover {
             color: #004499 !important;
@@ -279,7 +300,7 @@ st.html("""
             border: none !important;
         }
 
-        /* Pointer cursor */
+        /* pointer cursor */
         .st-key-getting_links [data-testid="stButton"] button,
         .st-key-getting_links [data-testid="stPageLink"] a {
             cursor: pointer !important;
@@ -292,14 +313,23 @@ st.html("""
     </div>
 """)
 
+###################################################
+# VIEW OPENING HOURS
+# TICKETS & ADMISSIONS
+# EXPLORE THE PARK
+# PLAN MY VISIT 
+# DISPLAY AND CONTROLS
+###################################################
+
+#container key allows CSS to target only these buttons and links
 with st.container(key="getting_links"):
 
-    col1, col2, col3, col4 = st.columns(4, gap="large")
+    col1, col2, col3, col4 = st.columns(4, gap="large") #4 information columns
 
     with col1:
         st.html("""
             <div class="getting-item">
-                <div class="getting-icon">🕙</div>
+                <div class="getting-icon">🕓</div>
                 <h3>Opening Hours</h3>
                 <p>
                     Plan ahead for your adventure.
@@ -309,6 +339,7 @@ with st.container(key="getting_links"):
             </div>
         """)
 
+        #open the operating hours modal when clicked
         if st.button("View Opening Hours", key="view_hours"):
             show_opening_hours()
 
@@ -334,22 +365,22 @@ with st.container(key="getting_links"):
         st.html("""
             <div class="getting-item">
                 <div class="getting-icon">🗺️</div>
-                <h3>Explore the Park</h3>
+                <h3>Explore the Park Map</h3>
                 <p>
-                    Discover exciting attractions,
-                    magical performances and
-                    experiences for everyone.
+                    Chart your route to the thrills. 
+                    Browse our interactive park map to plan your must-ride attractions.   
                 </p>
             </div>
         """)
 
+        #open the park map modal when clicked
         if st.button("View Park Map", key="view_map"):
             show_park_map()
 
     with col4:
         st.html("""
             <div class="getting-item">
-                <div class="getting-icon">📅</div>
+                <div class="getting-icon">🗓️</div>
                 <h3>Plan My Visit</h3>
                 <p>
                     Create a personalised itinerary
@@ -363,15 +394,17 @@ with st.container(key="getting_links"):
             "pages/2_Park_Planner.py",
             label="Start Planning"
         )
+###########################################################
+####### END OF 4 COL DISPLAY AND CONTROLS #################
+###########################################################
 
 #################################################################
-##################### ATTRACTIONS DESIGN ########################
+##################### EXPLORE WONDERWORLD DESIGN ################
 #################################################################
-
 st.html("""
     <style>
 
-        /* Main attractions section */
+        /* main attractions section */
         .st-key-home_attractions_grid {
             width: 100%;
             max-width: 1400px;
@@ -382,7 +415,7 @@ st.html("""
             background-color: #ffffff;
         }
 
-        /* Main section heading */
+        /* main section heading */
         .section-title {
             color: #142B40;
             text-align: center;
@@ -391,7 +424,7 @@ st.html("""
             margin-bottom: 10px;
         }
 
-        /* Main section subtitle */
+        /* main section subtitle */
         .section-subtitle {
             color: #666666;
             text-align: center;
@@ -399,20 +432,20 @@ st.html("""
             margin-bottom: 40px;
         }
 
-        /* Attraction image container */
+        /* attraction image container */
         .st-key-home_attractions_grid [data-testid="stImage"] {
             width: 100%;
         }
 
-        /* Attraction image */
+        /* attraction image */
         .st-key-home_attractions_grid [data-testid="stImage"] img {
             width: 100%;
-            height: 280px;
-            object-fit: cover;
+            height: 280px; /* consistent attraction image height */
+            object-fit: cover; /* crop image without stretching */
             border-radius: 8px;
         }
 
-        /* Category title */
+        /* category title */
         .category-title {
             color: #142B40;
             font-size: 26px;
@@ -421,7 +454,7 @@ st.html("""
             margin-bottom: 8px;
         }
 
-        /* Category description */
+        /* category description */
         .category-description {
             color: #444444;
             font-size: 17px;
@@ -429,7 +462,7 @@ st.html("""
             margin-bottom: 15px;
         }
 
-        /* Ride name tags */
+        /* ride name tags */
         .ride-tag {
             display: inline-block;
             background-color: #f4f4f4;
@@ -442,17 +475,17 @@ st.html("""
             margin-bottom: 8px;
         }
 
-        /* Space between rows */
+        /* space between rows */
         .grid-spacing {
             height: 40px;
         }
 
-        /* Page background */
+        /* page background */
         .stApp {
             background-color: #ffffff;
         }
 
-        /* Classification buttons */
+        /* classification buttons */
         [data-testid="stSegmentedControl"] button {
             border-radius: 30px !important;
             padding: 10px 22px !important;
@@ -467,7 +500,7 @@ st.html("""
 
 with st.container(key="home_attractions_grid"):
 
-    # Section heading
+    #section heading
     st.html("""
         <h2 class="section-title">
             Explore WonderWorld
@@ -484,26 +517,27 @@ with st.container(key="home_attractions_grid"):
 # CLASSIFICATION BAR
 #############################################################
 
-    classification = st.segmented_control(
+    #main filter, only one option can be selected at a time
+    classification = st.segmented_control( #creates horizontal bar of connected buttons
         "Attraction Classification",
-        options=[
+        options=[ 
             "All",
             "Rides",
             "Shows & Entertainment"
         ],
         default="All",
         selection_mode="single",
-        label_visibility="collapsed"
+        label_visibility="collapsed" #hides attraction classification label
     )
 
     selected_category = "All Rides"
 
-    # Secondary classification for rides
+    #secondary classification for rides
     if classification == "Rides":
 
         selected_category = st.segmented_control(
             "Ride Categories",
-            options=["All Rides"] + list(attractions.keys()),
+            options=["All Rides"] + list(attractions.keys()), #retrieve category names from database
             default="All Rides",
             selection_mode="single",
             label_visibility="collapsed"
@@ -513,19 +547,16 @@ with st.container(key="home_attractions_grid"):
 # FILTER ATTRACTIONS
 #############################################################
 
-    display_attractions = []
+    display_attractions = [] #store rides and shows matching the selected filters
 
-    # Retrieve rides
+    #retrieve rides
     if classification in ["All", "Rides"]:
 
-        for category, rides in attractions.items():
+        for category, rides in attractions.items(): #key = category, value = list of rides
 
-            if (
-                classification == "All"
-                or selected_category == "All Rides"
-                or selected_category == category
-            ):
-
+            #include all rides or only rides from the selected category
+            if (classification == "All" or selected_category == "All Rides" or selected_category == category):
+                #store each ride using the same structure as the shows below
                 for ride in rides:
 
                     display_attractions.append({
@@ -534,7 +565,7 @@ with st.container(key="home_attractions_grid"):
                         "details": ride
                     })
 
-    # Retrieve shows
+    #retrieve shows
     if classification in ["All", "Shows & Entertainment"]:
 
         for category, performances in shows.items():
@@ -547,48 +578,47 @@ with st.container(key="home_attractions_grid"):
                     "details": show
                 })
 
-    #############################################################
-    # DISPLAY FILTERED ATTRACTIONS
-    #############################################################
+    print(display_attractions)
 
+    print("\nTotal attractions:", len(display_attractions))
+
+#############################################################
+# DISPLAY FILTERED ATTRACTIONS
+#############################################################
+
+    #display 3 attractions per row
     for i in range(0, len(display_attractions), 3):
 
         columns = st.columns(3, gap="large")
 
-        for col, item in zip(
-            columns,
-            display_attractions[i:i + 3]
-        ):
-
+        #zip() pairs each column with one attraction
+        #display_attractions[i:i + 3] retrieves up to 3 items for the current row
+        for col, item in zip(columns, display_attractions[i:i + 3]):
             with col:
-
-                # Retrieve individual attraction details
+                #retrieve individual attraction details
                 attraction = item["details"]
                 category = item["category"]
                 attraction_type = item["type"]
 
-                # Display attraction image
+                #display attraction image
                 image_path = BASE_DIR / attraction["image"]
 
-                if image_path.exists():
+                if image_path.exists(): 
 
                     st.image(
                         str(image_path),
                         use_container_width=True
                     )
 
-                # Display attraction name
+                #display attraction name
                 st.html(f"""
                     <h3 class="category-title">
                         {attraction["name"]}
                     </h3>
                 """)
 
-                # Display description
-                description = attraction.get(
-                    "description",
-                    category_descriptions.get(category, "")
-                )
+                #retrieve attraction description, default = "No description available"
+                description = attraction.get("description", "No description available")
 
                 st.html(f"""
                     <p class="category-description">
@@ -596,7 +626,7 @@ with st.container(key="home_attractions_grid"):
                     </p>
                 """)
 
-                # Display category and duration tags
+                #display category and duration tags
                 st.html(f"""
                     <span class="ride-tag">
                         {category}
@@ -607,9 +637,10 @@ with st.container(key="home_attractions_grid"):
                     </span>
                 """)
 
-                # Display show times for entertainment
+                #display show times for entertainment
                 if attraction_type == "Show":
 
+                    #combine show times into a comma-separated string
                     show_times = ", ".join(
                         attraction["show_times"]
                     )
@@ -621,11 +652,11 @@ with st.container(key="home_attractions_grid"):
                         </p>
                     """)
 
-        # Add spacing between rows
+        #add spacing between rows
         st.html('<div class="grid-spacing"></div>')
 
 # ###############################################################
 # ########################## FOOTER #############################
 # ###############################################################
 
-show_footer()
+show_footer() #shared footer imported from src/init.py

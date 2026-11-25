@@ -14,6 +14,8 @@ PARK_HOURS = {
         "Saturday": "9:00 AM - 9:00 PM",
         "Sunday": "9:00 AM  8:00 PM"
 }
+PARK_PHONE = "+1 (435) 555-0148"
+PARK_EMAIL = "enquiries@wonderworld.com"
 
 PARK_TAGLINE = "Your day, your way."
 PARK_IS_FICTIONAL = True
@@ -25,9 +27,9 @@ PARK_IS_FICTIONAL = True
 import streamlit as st
 
 def show_footer():
-    st.html("""
+    st.html(f"""
         <style>
-            .wonder-footer {
+            .wonder-footer {{
                 background-color: #142B40;
                 color: #ffffff;
 
@@ -44,46 +46,46 @@ def show_footer():
                 margin-bottom: 0;
 
                 box-sizing: border-box;
-            }
+            }}
 
-            .footer-content {
+            .footer-content {{
                 max-width: 1200px;
                 margin: 0 auto;
                 display: grid;
                 grid-template-columns: 2fr 1fr 1fr;
                 gap: 50px;
-            }
+            }}
 
-            .footer-brand {
+            .footer-brand {{
                 font-size: 30px;
                 font-weight: bold;
                 margin-bottom: 15px;
-            }
+            }}
 
-            .footer-heading {
+            .footer-heading {{
                 font-size: 18px;
                 font-weight: 600;
                 margin-bottom: 18px;
-            }
+            }}
 
-            .wonder-footer p {
+            .wonder-footer p {{
                 color: #cccccc;
                 line-height: 1.8;
-            }
+            }}
 
-            .footer-links a {
+            .footer-links a {{
                 display: block;
                 color: #cccccc;
                 text-decoration: none;
                 margin-bottom: 12px;
-            }
+            }}
 
-            .footer-links a:hover {
+            .footer-links a:hover {{
                 color: #ffffff;
                 text-decoration: underline;
-            }
+            }}
 
-            .footer-bottom {
+            .footer-bottom {{
                 max-width: 1200px;
                 margin: 45px auto 0;
                 padding-top: 20px;
@@ -91,23 +93,23 @@ def show_footer():
                 text-align: center;
                 color: #bbbbbb;
                 font-size: 14px;
-            }
+            }}
 
-            @media (max-width: 700px) {
-                .footer-content {
+            @media (max-width: 700px) {{
+                .footer-content {{
                     grid-template-columns: 1fr;
                     gap: 25px;
-                }
-            }
+                }}
+            }}
             /* Remove extra bottom padding from Streamlit's page container */
-            [data-testid="stMainBlockContainer"] {
+            [data-testid="stMainBlockContainer"] {{
                 padding-bottom: 0 !important;
-            }
+            }}
 
             /* Prevent horizontal overflow from full-width sections */
-            [data-testid="stMain"] {
+            [data-testid="stMain"] {{
                 overflow-x: clip;
-            }
+            }}
         </style>
 
         <footer class="wonder-footer">
@@ -131,10 +133,10 @@ def show_footer():
                 </div>
 
                 <div>
-                    <h3 class="footer-heading">Visitor Information</h3>
-                    <p>Opening Hours</p>
-                    <p>Tickets & Admission</p>
-                    <p>Park Information</p>
+                    <h3 class="footer-heading">Contact & Location</h3>
+                    <p>📍 {PARK_LOCATION}</p>
+                    <p>📞 {PARK_PHONE}</p>
+                    <p>✉️ {PARK_EMAIL}</p>
                 </div>
 
             </div>

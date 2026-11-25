@@ -17,7 +17,13 @@ attractions = {
             "name": "Sky Drop",
             "capacity": 20,
             "duration": 3,
-            "image": "assets/attractions/thrill rides/skyDrop.jpg"
+            "image": "assets/attractions/thrill rides/skyDrop.jpg",
+
+            "description": "Rise high above WonderWorld before experiencing an exhilarating free-fall drop.",
+            "type": "Free-fall Drop Tower",
+            "location": "Adventure Zone",
+            "height_restriction": "Minimum 130 cm",
+            "advisory": "Not recommended for pregnant guests or guests with heart, neck or back conditions."
         }
     ],
 
@@ -26,13 +32,25 @@ attractions = {
             "name": "Rocket Hydro",
             "capacity": 16,
             "duration": 8,
-            "image": "assets/attractions/water rides/rocketHydro.jpg"
+            "image": "assets/attractions/water rides/rocketHydro.jpg",
+
+            "description": "Race through exciting water channels, unexpected twists and refreshing splashes.",
+            "type": "Water Coaster",
+            "location": "Splash Zone",
+            "height_restriction": "Minimum 110 cm",
+            "advisory": "Guests may get wet. Secure loose belongings before boarding."
         },
         {
             "name": "Tidal Wave",
             "capacity": 12,
             "duration": 10,
-            "image": "assets/attractions/water rides/tidalWave.jpg"
+            "image": "assets/attractions/water rides/tidalWave.jpg",
+
+            "description": "Navigate rushing rapids and unpredictable waves on a splashing adventure with friends and family.",
+            "type": "River Rapids Ride",
+            "location": "Splash Zone",
+            "height_restriction": "Minimum 100 cm",
+            "advisory": "Guests may get completely soaked. Young children must be accompanied by an adult."
         }
     ],
 
@@ -41,13 +59,25 @@ attractions = {
             "name": "Magic Carousel",
             "capacity": 30,
             "duration": 5,
-            "image": "assets/attractions/family rides/magicCarousel.jpg"
+            "image": "assets/attractions/family rides/magicCarousel.jpg",
+
+            "description": "Take a magical spin on beautifully decorated carousel horses accompanied by enchanting music.",
+            "type": "Traditional Carousel",
+            "location": "Fantasy Village",
+            "height_restriction": "Guests below 90 cm must be accompanied by an adult",
+            "advisory": "Young children must remain supervised throughout the ride."
         },
         {
             "name": "Umbrella Coast",
             "capacity": 40,
             "duration": 12,
-            "image": "assets/attractions/family rides/umbrellaCoast.webp"
+            "image": "assets/attractions/family rides/umbrellaCoast.webp",
+
+            "description": "Float beneath colourful umbrellas and enjoy a gentle, whimsical adventure suitable for the whole family.",
+            "type": "Family Aerial Ride",
+            "location": "Fantasy Village",
+            "height_restriction": "Minimum 90 cm",
+            "advisory": "Guests sensitive to heights or circular motion should ride with caution."
         }
     ],
 
@@ -56,13 +86,25 @@ attractions = {
             "name": "Alpine Express",
             "capacity": 48,
             "duration": 15,
-            "image": "assets/attractions/scenic rides/alpineExpress.jpg"
+            "image": "assets/attractions/scenic rides/alpineExpress.jpg",
+
+            "description": "Embark on a relaxing railway journey through picturesque landscapes and scenic mountain surroundings.",
+            "type": "Scenic Railway",
+            "location": "Alpine Valley",
+            "height_restriction": "No minimum height requirement",
+            "advisory": "Guests must remain seated throughout the journey."
         },
         {
             "name": "Ancient Cruiser",
             "capacity": 20,
             "duration": 10,
-            "image": "assets/attractions/scenic rides/ancientCruiser.webp"
+            "image": "assets/attractions/scenic rides/ancientCruiser.webp",
+
+            "description": "Cruise through tranquil waterways and discover mysterious ancient ruins along the way.",
+            "type": "Scenic Boat Ride",
+            "location": "Ancient Kingdom",
+            "height_restriction": "No minimum height requirement",
+            "advisory": "Young children must be accompanied by an adult. Remain seated throughout the ride."
         }
     ],
 
@@ -71,13 +113,25 @@ attractions = {
             "name": "Jungle Expedition",
             "capacity": 16,
             "duration": 8,
-            "image": "assets/attractions/adventure rides/jungleExpedition.jpg"
+            "image": "assets/attractions/adventure rides/jungleExpedition.jpg",
+
+            "description": "Journey deep into a mysterious jungle filled with hidden treasures, exotic scenery and unexpected surprises.",
+            "type": "Jungle Exploration Ride",
+            "location": "Adventure Zone",
+            "height_restriction": "Minimum 100 cm",
+            "advisory": "Contains sudden movements, loud sounds and dimly lit environments."
         },
         {
             "name": "Mystery Mine",
             "capacity": 24,
             "duration": 6,
-            "image": "assets/attractions/adventure rides/mysteryMine.webp"
+            "image": "assets/attractions/adventure rides/mysteryMine.webp",
+
+            "description": "Venture into an abandoned mine and uncover its hidden secrets through dark tunnels and thrilling twists.",
+            "type": "Indoor Adventure Coaster",
+            "location": "Ancient Kingdom",
+            "height_restriction": "Minimum 110 cm",
+            "advisory": "Contains dark environments, flashing lights, sudden movements and loud sounds."
         }
     ]
 }
@@ -93,7 +147,12 @@ shows = {
             "capacity": 500,
             "duration": 20,
             "show_times": ["19:30"],
-            "image": "assets/shows/echoesOfTheAncient.jpg"
+            "image": "assets/shows/echoesOfTheAncient.jpg",
+
+            "type": "Fireworks & Light Spectacular",
+            "location": "Ancient Kingdom",
+            "height_restriction": "No minimum height requirement",
+            "advisory": "Contains fireworks, flashing lights and loud sounds."
         },
         {
             "name": "Wings of Time",
@@ -104,7 +163,12 @@ shows = {
             "capacity": 300,
             "duration": 30,
             "show_times": ["14:00", "17:00"],
-            "image": "assets/shows/wingsOfTime.jpg"
+            "image": "assets/shows/wingsOfTime.jpg",
+
+            "type": "Live Parade & Musical Performance",
+            "location": "WonderWorld Main Street",
+            "height_restriction": "No minimum height requirement",
+            "advisory": "Guests should remain within designated viewing areas throughout the performance."
         },
         {
             "name": "The Dreamweaver’s Tent",
@@ -115,55 +179,14 @@ shows = {
             "capacity": 200,
             "duration": 25,
             "show_times": ["11:00", "15:30"],
-            "image": "assets/shows/dreamweaversTent.jpg"
+            "image": "assets/shows/dreamweaversTent.jpg",
+
+            "type": "Live Theatrical Performance",
+            "location": "Fantasy Village",
+            "height_restriction": "No minimum height requirement",
+            "advisory": "Contains theatrical lighting, sound effects and occasional loud music."
         }
     ]
-}
-
-category_descriptions = {
-    "Thrill Rides": (
-        "Get your adrenaline pumping with exhilarating "
-        "drops, high-speed turns and unforgettable adventures."
-    ),
-
-    "Water Rides": (
-        "Dive into refreshing adventures and make a "
-        "splash with our exciting water attractions."
-    ),
-
-    "Family Rides": (
-        "Create magical memories together with delightful "
-        "attractions for the whole family."
-    ),
-
-    "Scenic Rides": (
-        "Take a moment to unwind and enjoy breathtaking "
-        "views as you journey through WonderWorld."
-    ),
-
-    "Adventure Rides": (
-        "Embark on exciting expeditions and discover "
-        "hidden wonders around every corner."
-    )
-}
-
-vibe_categories = {
-    "Chill & Relaxing": [
-        "Scenic Rides",
-        "Family Rides"
-    ],
-
-    "Thrill Seeker": [
-        "Thrill Rides",
-        "Adventure Rides"
-    ],
-
-    "Fun & Playful": [
-        "Family Rides",
-        "Water Rides"
-    ],
-
-    "A Bit of Everything": random.sample(list(attractions.keys()),5)
 }
 
 ticket_prices = {
