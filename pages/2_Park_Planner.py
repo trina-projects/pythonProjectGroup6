@@ -1,12 +1,16 @@
 import streamlit as st
 from pathlib import Path
 from database.attractions import attractions
-from src.validation import calculate_ride_time
-from src.init import show_footer
-import html
-import re
-from src.validation import send_itinerary_email
+from src.init import (
+    show_footer,
+    PARK_NAME,
+    PARK_LOCATION,
+    PARK_HOURS,
+    PARK_TAGLINE
+)
 
+import html
+from src.validation import send_itinerary_email, validate_email
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 st.html("""
@@ -279,6 +283,7 @@ else:
         use_container_width=True
     ):
         st.session_state.planner_generated = True
+        st.session_state.itinerary_index = 0
 
     if st.button("Clear Selection"):
         st.session_state.planner_selected = []
@@ -289,153 +294,131 @@ else:
 # GENERATED ITINERARY
 # -------------------------------------------------
 
-PARK_NAME = "WonderWorld"
-PARK_LOCATION = "Sentosa Island, Singapore (fictional park)"
-PARK_HOURS = "10:00 AM - 8:00 PM"
+
+@st.dialog("Your Adventure Itinerary", width="large")
+def show_itinerary(itinerary):
+    count = len(itinerary)
+    index = st.session_state.get("itinerary_index", 0) % count
+    ride = itinerary[index]
+
+    st.html("""
+        <div style="background:#DCEFED; padding:20px;
+                    border-radius:12px; text-align:center; color:#142B40;">
+            <small>W O N D E R W O R L D</small>
+            <h2>Your Adventure Itinerary 🎡</h2>
+            <p>Your day, your way.</p>
+        </div>
+        <style>
+            .st-key-itinerary_card [data-testid="stImage"] img {
+                width: 100% !important;
+                height: 260px !important;
+                object-fit: cover !important;
+                border-radius: 10px !important;
+            }
+        </style>
+    """)
+    st.write(f"📍 **Location:** {PARK_LOCATION}")
+    st.write("🕙 **Opening Hours:**")
+
+    for day, hours in PARK_HOURS.items():
+        st.write(f"{day}: {hours}")
+    st.caption(f"Attraction {index + 1} of {count}")
+
+    def navigate(new_index):
+        st.session_state.itinerary_index = new_index % count
+
+    previous, center, following = st.columns(
+        [1, 8, 1], vertical_alignment="center"
+    )
+    with previous:
+        st.button("◀", key="itinerary_prev", disabled=count == 1,
+                    on_click=navigate, args=(index - 1,))
+
+    with center:
+        with st.container(key="itinerary_card", border=True):
+            image_path = BASE_DIR / ride["image"]
+            if image_path.is_file():
+                st.image(str(image_path), use_container_width=True)
+            else:
+                st.caption("Attraction image unavailable")
+
+            st.markdown(f"### {index + 1:02d}. {ride['name']}")
+            st.caption(ride["category"])
+            st.write(f"🎢 Ride duration: {ride['ride_duration']} min")
+
+    with following:
+        st.button("▶︎", key="itinerary_next", disabled=count == 1,
+                    on_click=navigate, args=(index + 1,))
+
+    # Clickable pagination dots
+    with st.container(key="itinerary_dots"):
+        st.html("""
+            <style>
+                .st-key-itinerary_dots button {
+                    border: none !important;
+                    background: transparent !important;
+                    padding: 0 !important;
+                    min-height: 30px !important;
+                    color: #426E70 !important;
+                }
+            </style>
+        """)
+        dots = st.columns([2] + [1] * count + [2])
+        for i in range(count):
+            with dots[i + 1]:
+                st.button("●" if i == index else "○",
+                            key=f"itinerary_dot_{i}",
+                            on_click=navigate, args=(i,),
+                            use_container_width=True)
+
+    st.caption(f"{count} attractions in your adventure plan")
+    st.divider()
+    st.markdown("#### 📧 Email Your Itinerary")
+    st.write("Want to keep a copy of your adventure plan?")
+
+    email_address = st.text_input(
+        "Email address", placeholder="you@example.com", key="planner_email"
+    )
+    if st.button("Send My Itinerary", type="primary", use_container_width=True):
+        if not validate_email(email_address):
+            st.warning("Please enter a valid email address.")
+        else:
+            try:
+                with st.spinner("Sending your itinerary..."):
+                    send_itinerary_email(
+                        recipient=email_address.strip(),
+                        itinerary=itinerary_details
+                    )
+                st.success("Your itinerary has been emailed!")
+            except Exception as e:
+                st.error(f"Failed to send email: {type(e).__name__}")
+
+    if st.button("Close", key="close_itinerary", use_container_width=True):
+        st.session_state.planner_generated = False
+        st.rerun()
+
 
 if st.session_state.planner_generated and selected_names:
+    # Preserve the order chosen by the visitor.
+    rides_by_name = {item["details"]["name"]: item for item in all_rides}
+    itinerary_details = []
 
-    st.divider()
+    for name in selected_names:
+        if name not in rides_by_name:
+            continue
+        item = rides_by_name[name]
+        ride = item["details"]
+        itinerary_details.append({
+            "name": name,
+            "category": item["category"],
+            "image": ride["image"],
+            "ride_duration": ride["duration"]
+        })
 
-    # Restrict the width of the itinerary card
-    left_space, card_col, right_space = st.columns([1, 2, 1])
-
-    with card_col:
-
-        with st.container(border=True):
-
-            st.html("""
-                <div style="
-                    background: #DCEFED;
-                    padding: 24px 12px;
-                    border-radius: 12px;
-                    text-align: center;
-                    margin-bottom: 18px;
-                ">
-                    <div style="
-                        font-size: 13px;
-                        letter-spacing: 2px;
-                        color: #426E70;
-                    ">WONDERWORLD</div>
-
-                    <h2 style="
-                        color: #17384A;
-                        margin: 10px 0;
-                    ">Your Adventure Itinerary 🎡</h2>
-
-                    <p style="color: #426E70; margin: 0;">
-                        Your day, your way.
-                    </p>
-                </div>
-            """)
-
-            st.write(f"📍 **Location:** {PARK_LOCATION}")
-            st.write(f"🕙 **Opening Hours:** {PARK_HOURS}")
-
-            st.divider()
-
-            total_duration = 0
-            itinerary_details = []
-
-            for index, name in enumerate(selected_names, start=1):
-
-                ride = None
-
-                for item in all_rides:
-                    if item["details"]["name"] == name:
-                        ride = item["details"]
-                        break
-
-                if ride is None:
-                    continue
-
-                timing = calculate_ride_time(ride)
-
-                if timing is None:
-                    st.warning(f"Cannot estimate time for {name}.")
-                    continue
-
-                total_duration += timing["total_time"]
-
-                itinerary_details.append({
-                    "name": name,
-                    "ride_duration": timing["ride_duration"],
-                    "waiting_time": timing["waiting_time"],
-                    "total_time": timing["total_time"]
-                })
-
-                st.markdown(f"#### {index:02d}. {name}")
-
-                st.caption(
-                    f"🎢 Ride: {timing['ride_duration']} min  |  "
-                    f"⏳ Wait: {timing['waiting_time']} min"
-                )
-
-                st.write(
-                    f"**Estimated stop: {timing['total_time']} min**"
-                )
-
-                if index < len(selected_names):
-                    st.divider()
-
-            st.divider()
-
-            st.metric(
-                "Total Estimated Duration",
-                f"{total_duration} minutes"
-            )
-
-            st.caption(
-                "Waiting times are estimates based on sample "
-                "queue data. Walking, breaks and loading times "
-                "are not included."
-            )
-
-            st.divider()
-
-            st.markdown("#### 📧 Email Your Itinerary")
-
-            st.write(
-                "Want to keep a copy of your adventure plan? "
-                "Enter your email address below."
-            )
-
-            email_address = st.text_input(
-                "Email address",
-                placeholder="you@example.com",
-                key="planner_email"
-            )
-
-            if st.button(
-                "Send My Itinerary",
-                type="primary",
-                use_container_width=True
-            ):
-
-                if not re.fullmatch(
-                    r"[^@\s]+@[^@\s]+\.[^@\s]+",
-                    email_address.strip()
-                ):
-                    st.warning("Please enter a valid email address.")
-
-                else:
-                    try:
-                        with st.spinner("Sending your itinerary..."):
-
-                            send_itinerary_email(
-                                recipient=email_address.strip(),
-                                itinerary=itinerary_details,
-                                total_duration=total_duration,
-                                park_name=PARK_NAME,
-                                park_location=PARK_LOCATION,
-                                park_hours=PARK_HOURS
-                            )
-
-                        st.success("Your itinerary has been emailed!")
-
-                    except Exception as e:
-                        st.error(f"Failed to send email: {type(e).__name__}")
-                        st.write(str(e))
+    # Consume the open request so dismissing the modal does not reopen it.
+    st.session_state.planner_generated = False
+    if itinerary_details:
+        show_itinerary(itinerary_details)
 
 # -------------------------------------------------
 # FOOTER

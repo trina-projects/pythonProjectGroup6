@@ -1,3 +1,21 @@
+# General Park Information
+
+PARK_NAME = "WonderWorld"
+PARK_LOCATION = "• 4900 Red Mesa Scenic Loop, Copperridge, UT 84771"
+PARK_HOURS = {
+        "Monday": "10:00 AM - 7:00 PM",
+        "Tuesday": "10:00 AM - 7:00 PM",
+        "Wednesday": "10:00 AM - 7:00 PM",
+        "Thursday": "10:00 AM - 7:00 PM",
+        "Friday": "10:00 AM - 9:00 PM",
+        "Saturday": "9:00 AM - 9:00 PM",
+        "Sunday": "9:00 AM - 8:00 PM"
+}
+
+PARK_TAGLINE = "Your day, your way."
+PARK_IS_FICTIONAL = True
+
+
 #################################################################
 ############################ FOOTER #############################
 #################################################################

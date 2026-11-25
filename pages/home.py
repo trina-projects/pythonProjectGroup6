@@ -2,7 +2,7 @@ import streamlit as st
 import base64
 from pathlib import Path
 from database.attractions import attractions, category_descriptions, shows
-from src.init import show_footer
+from src.init import show_footer, PARK_NAME, PARK_LOCATION, PARK_HOURS
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -10,18 +10,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 def show_opening_hours():
     st.write("Plan your adventure with our weekly operating hours!")
 
-    hours = {
-        "Monday": "10:00 AM – 7:00 PM",
-        "Tuesday": "10:00 AM – 7:00 PM",
-        "Wednesday": "10:00 AM – 7:00 PM",
-        "Thursday": "10:00 AM – 7:00 PM",
-        "Friday": "10:00 AM – 9:00 PM",
-        "Saturday": "9:00 AM – 9:00 PM",
-        "Sunday": "9:00 AM – 8:00 PM"
-    }
-
-    for day, opening_hours in hours.items():
-        st.write(f"**{day}:** {opening_hours}")
+    for day, hours in PARK_HOURS.items():
+        st.write(f"{day}: {hours}")
 
     st.caption("Last admissions are 1 hour before closing time.")
 
