@@ -165,3 +165,17 @@ vibe_categories = {
 
     "A Bit of Everything": random.sample(list(attractions.keys()),5)
 }
+
+ticket_prices = {
+    "Non-Peak": {
+        "adult": 60,
+        "child": 40,
+        "family": 170
+    },
+    "Peak": {
+        "adult": 75,
+        "child": 50,
+        "family": 210
+    }
+}
+

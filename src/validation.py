@@ -1,69 +1,56 @@
+# ====================================
+# BACKEND FUNCTIONS
+# This file contains all backend logic for the website
+
+# Responsibilities:
+# 1. Calculate ticket prices.
+# 2. Generate and send itinerary emails.
+# 3. Generate and send ticket booking receipts.
+# 4. Determine peak and non-peak admission prices.
+# 5. Validate user inputs and ticket bookings.
+# 6. Generate random attraction recommendations.
+
+# =====================================
+
+
+#######################################
+########## IMPORT FUNCTIONS ###########
+#######################################
 import math
 from email.message import EmailMessage
-import ssl
-import smtplib
+import ssl #encrypted connections for sending email
+import smtplib #connect to email server
 import streamlit as st
-import re
+import re #regular expressions to check email format
 from datetime import date
 import random
-from database.attractions import attractions, shows
+from database.attractions import attractions, shows, ticket_prices as TICKET_PRICES
 from src.init import (
     PARK_NAME,
     PARK_LOCATION,
     PARK_HOURS
 )
 
+#create a secure SSL context for encrypted email connections.
 context = ssl.create_default_context()
 
-####################################
-########## ITINERARY ###############
-###################################
-
-def estimate_waiting_time(ride):
-    capacity = ride["capacity"]
-    duration = ride["duration"]
-    queue_length = ride["queue_length"]
-
-    if capacity <= 0:
-        return 0
-
-    batches = math.ceil(queue_length / capacity)
-
-    return batches * duration
-
-
-####################################
-########## CALCULATE TOTAL PRICE ###############
-###################################
-def calculate_total(adults, children):
-
-    ticket_prices = {
-        "Adult": 60,
-        "Child": 40
-    }
-
-    total = (
-        adults * ticket_prices["Adult"]
-        + children * ticket_prices["Child"]
-    )
-
-    # Apply 10% family discount
-    if adults >= 2 and children >= 2:
-        total *= 0.9
-
-    return total
-##########################
-###### EMAIL ############
-############################
+# =================================================
+# SEND ITINERARY EMAIL USED IN 2_Park_Planner.py
+# ================================================
 def send_itinerary_email(recipient, itinerary):
-    sender = st.secrets["EMAIL_ADDRESS"].strip()
-    password = st.secrets["EMAIL_APP_PASSWORD"].replace(" ", "").strip()
+    #retrieve from secrets.toml
+    sender = st.secrets["EMAIL_ADDRESS"].strip() 
+    password = st.secrets["EMAIL_APP_PASSWORD"].replace(" ", "").strip() #remove any spaces
+    
+    #create new email message object
     message = EmailMessage()
 
+    #email configuration
     message["Subject"] = f"Your {PARK_NAME} Adventure Itinerary"
     message["From"] = sender
     message["To"] = recipient
 
+    #email body
     lines = [
         f"Welcome to {PARK_NAME}!",
         "",
@@ -80,49 +67,62 @@ def send_itinerary_email(recipient, itinerary):
         "Your Selected Attractions:",
     ""
 ]
+    index = 1
+    for ride in itinerary: #loop through each selected attraction
+        lines.append(f"{index}. {ride['name']}") #add the attraction number and name
+        lines.append(f"   Ride: {ride['ride_duration']} min") #add the ride duration
+        lines.append("")  #add a blank line for spacing
+        index += 1  #increase attraction number by 1
 
-    for index, ride in enumerate(itinerary, start=1):
-        lines.extend([
-            f"{index}. {ride['name']}",
-            f"   Ride: {ride['ride_duration']} min",
-            ""
-        ])
+    #add email footer
+    lines.append(f"Total attractions: {len(itinerary)}")
+    lines.append("")
+    lines.append("Have a wonderful adventure!")
+    lines.append(f"The {PARK_NAME} Team")
 
-    lines.extend([
-        f"Total attractions: {len(itinerary)}",
-        "",
-        "Have a wonderful adventure!",
-        "The WonderWorld Team"
-    ])
+    message.set_content("\n".join(lines)) #combine every line into one complete email message
 
-    message.set_content("\n".join(lines))
-
+    #connect to gmail and send to email
+    # SMTP stands for Simple Mail Transfer Protocol.
+    # It allows the application to send emails through an external email provider.
+    #
+    # smtp.gmail.com is Gmail's SMTP server.
+    # Port 587 supports email submission using STARTTLS.
+    # timeout=30 prevents the connection from waiting indefinitely if the server cannot be reached.
     with smtplib.SMTP("smtp.gmail.com", 587, timeout=30) as smtp:
-        smtp.ehlo()
-        smtp.starttls(context=context)
-        smtp.ehlo()
+        smtp.ehlo() #start connection with echo location
+        smtp.starttls(context=context) #upgrade to encrypted connection
+        smtp.ehlo() #start again after introducing encrypted connection 
 
-        smtp.login(sender, password)
+        smtp.login(sender, password) #login through your provided email
 
-        print("Gmail authentication successful!")
+        print("Gmail authentication successful!") 
 
-        smtp.send_message(message)
+        smtp.send_message(message) #finally send message
 
         print("Email accepted by Gmail!")
+# =================================================
+# END OF SEND ITINERARY EMAIL 
+# ================================================
 
 
-########## EMAIL RECEIPT ################
+# =================================================
+# SEND TICKET BOOKING RECEIPT USED IN 3_Tickets.py
+# ================================================
 
-def send_ticket_receipt(
-    recipient,
-    visit_date,
-    adults,
-    children,
-    families,
-    booking
-):
+#generates and emails a ticket booking receipt.
+#Parameters:
+#  recipient (str): Visitor's email address.
+#  visit_date (date): Selected date of visit.
+#  adults (int): Number of individual adult tickets.
+#  children (int): Number of individual child tickets.
+#  families (int): Number of family bundles.
+#  booking (dict): Calculated booking information.
 
-    sender = st.secrets["EMAIL_ADDRESS"].strip()
+def send_ticket_receipt(recipient, visit_date, adults, children, families, booking):
+
+    #retrieve credentials
+    sender = st.secrets["EMAIL_ADDRESS"].strip() 
 
     password = (
         st.secrets["EMAIL_APP_PASSWORD"]
@@ -132,9 +132,11 @@ def send_ticket_receipt(
 
     prices = booking["prices"]
 
+    #create new email object
     message = EmailMessage()
 
-    message["Subject"] = "WonderWorld - Booking Receipt"
+    #construct email
+    message["Subject"] = f"{PARK_NAME} - Booking Receipt"
     message["From"] = sender
     message["To"] = recipient
 
@@ -181,23 +183,20 @@ def send_ticket_receipt(
         PARK INFORMATION
 
         Location: {PARK_LOCATION}
-        Opening Hours: {PARK_HOURS}
+        Opening Hours: {PARK_HOURS[visit_date.strftime("%A")]}
 
         We look forward to welcoming you
         to a magical day at {PARK_NAME}!
 
         """
 
+    #assign completed receipt as the email content
     message.set_content(receipt)
 
-    context = ssl.create_default_context()
+    #connect and send to email
+    context = ssl.create_default_context() #create a secure SSL context for email encryption
 
-    with smtplib.SMTP(
-        "smtp.gmail.com",
-        587,
-        timeout=30
-    ) as smtp:
-
+    with smtplib.SMTP("smtp.gmail.com", 587, timeout=30) as smtp:
         smtp.ehlo()
         smtp.starttls(context=context)
         smtp.ehlo()
@@ -205,34 +204,20 @@ def send_ticket_receipt(
         smtp.login(sender, password)
         smtp.send_message(message)
 
-# ###############################################################
-# ###################### TICKET PRICING #########################
-# ###############################################################
+# ===============================================================
+# TICKET PRICING CONFIGURATION
+# ===============================================================
 
-TICKET_PRICES = {
-    "Non-Peak": {
-        "adult": 60,
-        "child": 40,
-        "family": 170
-    },
-    "Peak": {
-        "adult": 75,
-        "child": 50,
-        "family": 210
-    }
-}
-
-
-# Determine whether the selected date is a peak day
+#determine whether the selected date is a peak day or not
 def get_day_type(visit_date):
 
-    if visit_date.weekday() >= 5:
+    if visit_date.weekday() >= 5: #python's weekday function, index 0 = Monday, 6 = Sunday
         return "Peak"
 
     return "Non-Peak"
 
 
-# Retrieve ticket prices based on visit date
+#retrieve ticket prices based on visit date
 def get_ticket_prices(visit_date):
 
     day_type = get_day_type(visit_date)
@@ -240,26 +225,30 @@ def get_ticket_prices(visit_date):
     return TICKET_PRICES[day_type]
 
 
-# Calculate ticket prices and booking summary
+#calc ticket prices and booking summary
 def calculate_booking(adults, children, families, visit_date):
 
     prices = get_ticket_prices(visit_date)
 
+    #multiply tix quantity by their respective prices
     adult_total = adults * prices["adult"]
     child_total = children * prices["child"]
     family_total = families * prices["family"]
 
+    #sum total
     total = adult_total + child_total + family_total
 
+    #calc total no. of visitors
     total_adults = adults + (families * 2)
     total_children = children + (families * 2)
 
-    family_savings = (
-        (prices["adult"] * 2)
-        + (prices["child"] * 2)
-        - prices["family"]
-    ) * families
+    #calculate how much two adult tickets and two child tickets would cost if purchased alone
+    #subtract the family bundle price to determine the savings per bundle.
+    #multiply by the number of family bundles purchased.
+    family_savings = ( (prices["adult"] * 2) + (prices["child"] * 2) - prices["family"]) * families
 
+    #return complete booking information so that tix booking page 
+    # and email receipt function can access it without having to recalculate
     return {
         "day_type": get_day_type(visit_date),
         "prices": prices,
@@ -272,9 +261,30 @@ def calculate_booking(adults, children, families, visit_date):
         "family_savings": family_savings,
         "total": total
     }
+# ===============================================================
+# END OF TICKET PRICING CONFIGURATION
+# ===============================================================
 
 
-# Validate email address
+# ===============================================================
+# VALIDATE EMAIL ADDRESS
+# ===============================================================
+# re.fullmatch() checks whether the entire email address
+# matches the specified regular expression pattern.
+#
+# [^@\s]+ represents one or more characters that
+# are not an @ symbol or whitespace.
+#
+# @ represents the required email separator.
+#
+# \. represents a literal full stop.
+#
+# Example of an accepted format:
+# visitor@gmail.com
+#
+# strip() removes unnecessary surrounding whitespace.
+#
+# bool() converts the matching result into True or False.
 def validate_email(email):
 
     return bool(
@@ -285,29 +295,28 @@ def validate_email(email):
     )
 
 
-# Validate ticket booking
-def validate_booking(
-    adults,
-    children,
-    families,
-    visit_date,
-    email
-):
+# ===============================================================
+# VALIDATE TICKET BOOKING
+# ===============================================================
+def validate_booking(adults,children,families,visit_date,email):
 
     if visit_date < date.today():
         return False, "Please select a valid visit date."
 
-    if not (0 <= adults <= 20
-            and 0 <= children <= 20
-            and 0 <= families <= 10):
+    if not (0 <= adults <= 20 and 0 <= children <= 20 and 0 <= families <= 10):
         return False, "Invalid ticket quantity."
+    # note:
+    # if the maximum ticket quantities are changed here,
+    # the input limits in 3_Tickets.py should also be updated.
 
     if adults + children + families == 0:
         return False, "Please select at least one ticket."
 
+    #include visitors from both individual tix and family bundles
     total_adults = adults + (families * 2)
     total_children = children + (families * 2)
 
+    #reject bookings if only children and no adult
     if total_children > 0 and total_adults == 0:
         return False, (
             "Children must be accompanied "
@@ -320,14 +329,18 @@ def validate_booking(
     return True, "Booking is valid."
 
 
-################# RECOMMENDATION ###################
+# ===============================================================
+# RECOMMENDATION CAROUSEL MODAL USED IN 1_Attractions.py
+# ===============================================================
 
+#generates up to 5 random attraction recommendation
 def get_recommendations(current_name, limit=5):
 
+    #store the 5 random items in this list
     all_items = []
 
-    # Retrieve all rides
-    for category, rides in attractions.items():
+    #retrieve all rides
+    for category, rides in attractions.items(): #.item() is python function, returns dictionary key-value pair
 
         for ride in rides:
 
@@ -337,7 +350,7 @@ def get_recommendations(current_name, limit=5):
                 "details": ride
             })
 
-    # Retrieve all shows
+    #retrieve all show
     for category, show_list in shows.items():
 
         for show in show_list:
@@ -348,14 +361,14 @@ def get_recommendations(current_name, limit=5):
                 "details": show
             })
 
-    # Exclude the currently viewed attraction
-    available_items = [
-        item for item in all_items
-        if item["details"]["name"] != current_name
-    ]
+    #empty list to store filted attrations
+    available_items = []
 
-    # Randomly select up to 5 items
-    return random.sample(
-        available_items,
-        min(limit, len(available_items))
-    )
+    #loop through all rides and shows
+    for item in all_items:
+        attraction_name = item["details"]["name"]
+        if attraction_name != current_name: #check if attraction is different from current attraction
+            available_items.append(item) #add to list
+
+    #randomly select up to 5 items
+    return random.sample(available_items, min(limit, len(available_items)))
