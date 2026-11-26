@@ -1,3 +1,6 @@
+# =================================================
+# GLOBAL THEME CONFIGURATION
+# =================================================
 [theme]
 primaryColor = "#527F83"
 backgroundColor = "#FFFFFF"
