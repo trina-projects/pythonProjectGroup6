@@ -478,13 +478,13 @@ def show_attraction_details(item):
         st.subheader("Attraction Information")
 
         st.write("**Category:**", item["category"])
-
         #display ride-specific information
         if item["classification"] == "Rides":
             #use the category as a fallback if the type key is missing
             st.write("**Attraction Type:**", details.get("type", item["category"]))
             st.write("**Ride Duration:**", str(details["duration"]) + " minutes")
             st.write("**Ride Capacity:**", str(details["capacity"]) + " guests")
+            st.write("**Show Times:**")
 
             if "height_restriction" in details:
                 st.write("**Height Restrictions:**",details["height_restriction"])
@@ -495,6 +495,8 @@ def show_attraction_details(item):
 
             if "duration" in details:
                 st.write("**Show Duration:**", str(details["duration"]) + " minutes")
+            for time in details.get("show_times", []):
+                st.write(f"- {time}")
 
         #use a default safety message if advisory is missing
         with st.expander("Advisory: Before Visiting"):

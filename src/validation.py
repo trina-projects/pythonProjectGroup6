@@ -296,7 +296,7 @@ def validate_email(email):
 
 
 # ===============================================================
-# VALIDATE TICKET BOOKING
+# VALIDATE TICKET BOOKING IN 3_Park_Planner.py
 # ===============================================================
 def validate_booking(adults,children,families,visit_date,email):
 

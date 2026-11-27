@@ -342,9 +342,7 @@ def show_itinerary(itinerary): #parameter itinerary returns list of dictionaries
         st.session_state.itinerary_index = new_index
 
     #narrow arrow columns on either side of the itinerary card
-    previous, center, following = st.columns(
-        [1, 8, 1], vertical_alignment="center"
-    )
+    previous, center, following = st.columns([1, 8, 1], vertical_alignment="center")
     # LEFT ARROW
     with previous:
         st.button("◀", key="itinerary_prev", disabled=count == 1, #disable navigation if only 1 ride
